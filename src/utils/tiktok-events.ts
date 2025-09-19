@@ -1,10 +1,10 @@
 // utils/tiktokEvents.ts
 
-import axios from 'axios';
+import axios from "axios";
 
 interface Content {
   content_id: string;
-  content_type: 'product' | 'product_group';
+  content_type: "product" | "product_group";
   content_name: string;
 }
 
@@ -15,7 +15,7 @@ interface TikTokEventData {
   // Add other event-specific properties if needed
 }
 
-const tiktokPixelId = 'CSOQF13C77U9A53MR4U0'; // Replace with your actual Pixel ID
+const tiktokPixelId = "CSOQF13C77U9A53MR4U0"; // Replace with your actual Pixel ID
 
 const sendTikTokEvent = async (
   eventName: string,
@@ -36,7 +36,7 @@ const sendTikTokEvent = async (
         },
         properties: eventData,
       },
-      { headers: { 'Content-Type': 'application/json' } },
+      { headers: { "Content-Type": "application/json" } },
     );
 
     console.log(
@@ -47,22 +47,22 @@ const sendTikTokEvent = async (
     console.error(`Error sending TikTok event '${eventName}':`, error);
   }
 };
-const ipAddress = '127.0.0.1';
+const ipAddress = "127.0.0.1";
 const userAgent =
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3';
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
 
 sendTikTokEvent(
-  'Purchase',
+  "Purchase",
   {
     contents: [
       {
-        content_id: '12345',
-        content_type: 'product',
-        content_name: 'Awesome T-Shirt',
+        content_id: "12345",
+        content_type: "product",
+        content_name: "Awesome T-Shirt",
       },
     ],
     value: 25,
-    currency: 'USD',
+    currency: "USD",
   },
   ipAddress,
   userAgent,

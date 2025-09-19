@@ -7,9 +7,9 @@ import {
   JoinTable,
   OneToMany,
   CreateDateColumn,
-} from 'typeorm';
-import { Subscription } from '../subscriptions/entities/subscription.entity';
-import { Transaction } from '../payment/entities';
+} from "typeorm";
+import { Subscription } from "../subscriptions/entities/subscription.entity";
+import { Transaction } from "../payment/entities";
 
 @Entity()
 export class User {
@@ -22,8 +22,8 @@ export class User {
   @Column()
   password: string; // Ensure to hash passwords before storing
 
-  @Column({ default: 'customer', enum: ['admin', 'moderator', 'customer'] })
-  role: 'admin' | 'moderator' | 'customer';
+  @Column({ default: "customer", enum: ["admin", "moderator", "customer"] })
+  role: "admin" | "moderator" | "customer";
 
   @Column({ default: 0 })
   points: number;
@@ -49,6 +49,6 @@ export class User {
   @CreateDateColumn()
   created_at: Date;
 
-  @Column({ default: 'Egypt' })
+  @Column({ default: "Egypt" })
   country: string;
 }

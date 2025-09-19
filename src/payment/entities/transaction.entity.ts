@@ -6,28 +6,28 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   RelationId,
-} from 'typeorm';
-import { User } from '../../users/user.entity';
+} from "typeorm";
+import { User } from "../../users/user.entity";
 
-@Entity('transactions')
+@Entity("transactions")
 export class Transaction {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn("increment")
   id: string;
 
   @Column()
-  type: 'in' | 'out';
+  type: "in" | "out";
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0 })
+  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
   amount: number;
 
-  @Column('json', { nullable: true, default: null })
+  @Column("json", { nullable: true, default: null })
   result: any;
 
-  @Column({ default: 'pending' })
+  @Column({ default: "pending" })
   status: string;
 
   @ManyToOne(() => User, (user) => user.transactions)
-  @JoinColumn({ name: 'user_id' })
+  @JoinColumn({ name: "user_id" })
   user: User;
 
   @RelationId((transaction: Transaction) => transaction.user)

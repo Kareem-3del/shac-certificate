@@ -11,13 +11,13 @@ import {
   Res,
   Put,
   Header,
-} from '@nestjs/common';
-import { UsersService } from './users.service';
-import CreateChargeDto from '../payment/stripe/dto/create-charge.dto';
-import { User } from './user.entity';
-import { StripeService } from '../payment/stripe/stripe.service';
-import { Response } from 'express';
-@Controller('users')
+} from "@nestjs/common";
+import { UsersService } from "./users.service";
+import CreateChargeDto from "../payment/stripe/dto/create-charge.dto";
+import { User } from "./user.entity";
+import { StripeService } from "../payment/stripe/stripe.service";
+import { Response } from "express";
+@Controller("users")
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -30,7 +30,7 @@ export class UsersController {
     createUserDto: {
       username: string;
       password: string;
-      role: 'admin' | 'moderator' | 'customer';
+      role: "admin" | "moderator" | "customer";
       points?: number;
     },
   ) {
@@ -38,8 +38,8 @@ export class UsersController {
     return await this.usersService.create(username, password, role, points);
   }
 
-  @Header('Content-Type', 'application/json')
-  @Post('login')
+  @Header("Content-Type", "application/json")
+  @Post("login")
   async login(
     @Body() loginDto: { email: string; password: string },
     @Session() session: any,
@@ -47,32 +47,32 @@ export class UsersController {
   ) {
     try {
       const user = await this.usersService.login(loginDto);
-      console.log('User', user);
+      console.log("User", user);
       if (!user) {
-        throw new HttpException('Invalid username or password', 401);
+        throw new HttpException("Invalid username or password", 401);
       }
       session.user = user;
       res.send(user);
     } catch (e) {
-      res.status(401).send('Invalid username or password');
+      res.status(401).send("Invalid username or password");
     }
   }
 
-  @Delete(':id')
-  async deleteUser(@Param('id') id: string) {
+  @Delete(":id")
+  async deleteUser(@Param("id") id: string) {
     return await this.usersService.delete(+id);
   }
 
-  @Put(':id')
+  @Put(":id")
   async updateUser(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() user: User,
     @Res() res: Response,
   ) {
     try {
       const foundUser = await this.usersService.findById(+id);
       if (!foundUser) {
-        return res.status(404).send('User not found');
+        return res.status(404).send("User not found");
       }
       const result = await this.usersService.userRepository.save({
         ...user,
@@ -80,45 +80,45 @@ export class UsersController {
       });
       // await this.usersService.updateSubscriptionPurchasedCounts();
       if (result === null) {
-        return res.status(404).send('User not found');
+        return res.status(404).send("User not found");
       }
-      res.send('User updated');
+      res.send("User updated");
     } catch (e) {
-      res.status(400).send('Invalid data');
+      res.status(400).send("Invalid data");
     }
   }
 
-  @Get(':id')
-  async getUser(@Param('id') id: string) {
+  @Get(":id")
+  async getUser(@Param("id") id: string) {
     return await this.usersService.findById(+id);
   }
-  @Patch(':id/password')
+  @Patch(":id/password")
   async changePassword(
-    @Param('id') id: string,
-    @Body('newPassword') password: string,
+    @Param("id") id: string,
+    @Body("newPassword") password: string,
     @Res() res: Response,
   ) {
     const result = await this.usersService.userRepository.update(+id, {
       password,
     });
     if (result.affected === 0) {
-      return res.status(404).send('User not found');
+      return res.status(404).send("User not found");
     }
-    res.send('Password updated');
+    res.send("Password updated");
   }
-  @Patch(':id/points')
+  @Patch(":id/points")
   async updatePoints(
-    @Param('id') id: string,
-    @Body('points') points: number,
+    @Param("id") id: string,
+    @Body("points") points: number,
     @Res() res: Response,
   ) {
     const result = await this.usersService.userRepository.update(+id, {
       points,
     });
     if (result.affected === 0) {
-      return res.status(404).send('User not found');
+      return res.status(404).send("User not found");
     }
-    res.send('Points updated');
+    res.send("Points updated");
   }
 
   @Get()

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { createTransport, Transporter } from 'nodemailer';
-import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import Mail from 'nodemailer/lib/mailer';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from "@nestjs/common";
+import { createTransport, Transporter } from "nodemailer";
+import SMTPTransport from "nodemailer/lib/smtp-transport";
+import Mail from "nodemailer/lib/mailer";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class EmailService {
@@ -10,12 +10,12 @@ export class EmailService {
 
   constructor(private configService: ConfigService) {
     this.transporter = createTransport({
-      host: 'precertificationn.com', // Outgoing Server
+      host: "precertificationn.com", // Outgoing Server
       port: 465, // SMTP Port
       secure: true, // true for 465, false for other ports
       auth: {
-        user: this.configService.get<string>('EMAIL_USER'),
-        pass: this.configService.get<string>('EMAIL_PASSWORD'),
+        user: this.configService.get<string>("EMAIL_USER"),
+        pass: this.configService.get<string>("EMAIL_PASSWORD"),
       },
       tls: {
         rejectUnauthorized: false, // Bypass self-signed certificate issue
@@ -38,7 +38,7 @@ export class EmailService {
       Success: ${results.success}
       Failure: ${results.failure}
       
-      ${results.failedEmails.length > 0 ? `Failed emails:\n${results.failedEmails.join('\n')}` : ''}
+      ${results.failedEmails.length > 0 ? `Failed emails:\n${results.failedEmails.join("\n")}` : ""}
     `;
   }
 
@@ -65,18 +65,18 @@ export class EmailService {
         ...attachments.map((attachment) => ({
           filename: `${file_name}.pdf`,
           content: attachment,
-          contentType: 'application/pdf',
+          contentType: "application/pdf",
         })),
         ...images.map((image) => ({
           filename: image.filename,
-          content: Buffer.from(image.content, 'base64'),
+          content: Buffer.from(image.content, "base64"),
           contentType: image.contentType,
         })),
       ],
     };
 
     try {
-      console.log('send options', await this.transporter.sendMail(mailOptions));
+      console.log("send options", await this.transporter.sendMail(mailOptions));
       console.log(`Email sent successfully to ${to}`);
       return true;
     } catch (error) {
@@ -105,19 +105,19 @@ export class EmailService {
       failedEmails: [] as string[],
     };
 
-    console.log('Emails', recipients);
+    console.log("Emails", recipients);
     if (!recipients || recipients.length === 0)
-      throw new Error('No Email Exists');
+      throw new Error("No Email Exists");
 
     for (const to of recipients) {
       const success = await this.sendEmail(
         to,
         name,
         subject,
-        contentType === 'html' && htmlContent ? htmlContent : text,
+        contentType === "html" && htmlContent ? htmlContent : text,
         [], // Assuming this is for additional options, modify as needed
         attachments, // Pass attachments to the sendEmail function
-        contentType === 'html',
+        contentType === "html",
       );
       if (success) {
         results.success++;
@@ -130,10 +130,10 @@ export class EmailService {
       await this.delay(1000); // 1 second delay between each email
     }
 
-    console.log('Bulk email sending completed.');
+    console.log("Bulk email sending completed.");
     console.log(`Success: ${results.success}, Failure: ${results.failure}`);
     if (results.failedEmails.length > 0) {
-      console.log('Failed emails:', results.failedEmails);
+      console.log("Failed emails:", results.failedEmails);
     }
 
     const resultsSummary = this.formatResults(results);
@@ -141,8 +141,8 @@ export class EmailService {
     // Send results summary email
     await this.sendEmail(
       resultEmail,
-      'Bulk Email Results',
-      'Bulk Email Sending Results',
+      "Bulk Email Results",
+      "Bulk Email Sending Results",
       resultsSummary,
       [], // No attachments for the summary email
     );

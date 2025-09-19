@@ -1,10 +1,10 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { MoreThan, Repository } from 'typeorm';
-import { User } from './user.entity';
-import { SubscriptionsService } from '../subscriptions/subscriptions.service';
-import { ConfigService } from '@nestjs/config';
-import { Subscription } from '../subscriptions/entities/subscription.entity';
+import { HttpException, Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { MoreThan, Repository } from "typeorm";
+import { User } from "./user.entity";
+import { SubscriptionsService } from "../subscriptions/subscriptions.service";
+import { ConfigService } from "@nestjs/config";
+import { Subscription } from "../subscriptions/entities/subscription.entity";
 
 @Injectable()
 export class UsersService {
@@ -16,12 +16,12 @@ export class UsersService {
   ) {
     this.userRepository.find().then((users) => {
       if (users.length === 0) {
-        this.create('admin', 'admin', 'admin').then((r) =>
-          console.log('Admin user created', r),
+        this.create("admin", "admin", "admin").then((r) =>
+          console.log("Admin user created", r),
         );
       }
     });
-    console.log('UsersService created');
+    console.log("UsersService created");
   }
 
   async getUserAnalysis(daysAgo: number): Promise<any> {
@@ -48,7 +48,7 @@ export class UsersService {
         //  role: 'customer',
       },
       order: {
-        created_at: 'DESC',
+        created_at: "DESC",
       },
       take: 10,
     });
@@ -58,11 +58,11 @@ export class UsersService {
     // Fetch all subscriptions along with their associated users
     const subscriptions =
       await this.subscriptionsService.subscriptionRepository.find({
-        relations: ['users'],
+        relations: ["users"],
       });
 
     console.log(
-      'Updating purchased count for all subscriptions',
+      "Updating purchased count for all subscriptions",
       subscriptions,
     );
     // Loop through each subscription
@@ -71,7 +71,7 @@ export class UsersService {
       await this.subscriptionsService.subscriptionRepository.save(subscription);
     }
 
-    return 'Purchased count updated for all subscriptions';
+    return "Purchased count updated for all subscriptions";
   }
 
   async login(loginDto: { email: string; password: string }): Promise<User> {
@@ -92,10 +92,10 @@ export class UsersService {
 
   async countUsersByRole(): Promise<{ role: string; count: number }[]> {
     return this.userRepository
-      .createQueryBuilder('user')
-      .select('user.role', 'role')
-      .addSelect('COUNT(user.id)', 'count')
-      .groupBy('user.role')
+      .createQueryBuilder("user")
+      .select("user.role", "role")
+      .addSelect("COUNT(user.id)", "count")
+      .groupBy("user.role")
       .getRawMany();
   }
 
@@ -103,11 +103,11 @@ export class UsersService {
     { username: string; count: number }[]
   > {
     return this.userRepository
-      .createQueryBuilder('user')
-      .leftJoin('user.subscriptions', 'subscription')
-      .select('user.username', 'username')
-      .addSelect('COUNT(subscription.id)', 'count')
-      .groupBy('user.username')
+      .createQueryBuilder("user")
+      .leftJoin("user.subscriptions", "subscription")
+      .select("user.username", "username")
+      .addSelect("COUNT(subscription.id)", "count")
+      .groupBy("user.username")
       .getRawMany();
   }
 
@@ -128,12 +128,12 @@ export class UsersService {
     fromDate.setDate(fromDate.getDate() - daysAgo);
 
     return this.userRepository
-      .createQueryBuilder('user')
-      .leftJoin('user.subscriptions', 'subscription')
-      .select('user.username', 'username')
-      .addSelect('COUNT(subscription.id)', 'recentSubscriptions')
-      .where('subscription.created_at > :fromDate', { fromDate })
-      .groupBy('user.username')
+      .createQueryBuilder("user")
+      .leftJoin("user.subscriptions", "subscription")
+      .select("user.username", "username")
+      .addSelect("COUNT(subscription.id)", "recentSubscriptions")
+      .where("subscription.created_at > :fromDate", { fromDate })
+      .groupBy("user.username")
       .getRawMany();
   }
   async getUserSubscriptions(
@@ -142,11 +142,11 @@ export class UsersService {
   ): Promise<Subscription[]> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['subscriptions'], // Load the user's subscriptions
+      relations: ["subscriptions"], // Load the user's subscriptions
     });
 
     if (!user) {
-      throw new HttpException('User not found', 404);
+      throw new HttpException("User not found", 404);
     }
 
     // If a date filter is provided, filter subscriptions by creation date
@@ -163,10 +163,15 @@ export class UsersService {
   async create(
     username: string,
     password: string,
-    role: 'admin' | 'moderator' | 'customer' = 'customer',
+    role: "admin" | "moderator" | "customer" = "customer",
     points: number = 100,
   ): Promise<User> {
-    const newUser = this.userRepository.create({ username, password, role, points });
+    const newUser = this.userRepository.create({
+      username,
+      password,
+      role,
+      points,
+    });
     return await this.userRepository.save(newUser);
   }
 
@@ -185,7 +190,7 @@ export class UsersService {
   async findById(id: number): Promise<User | undefined> {
     return this.userRepository.findOne({
       where: { id },
-      relations: ['subscriptions'],
+      relations: ["subscriptions"],
     });
   }
 
@@ -204,52 +209,52 @@ export class UsersService {
     const subscription = await this.subscriptionsService.findOne(+subId);
 
     subscription.emailMessage = subscription.emailMessage.replaceAll(
-      '[EMAIL]',
+      "[EMAIL]",
       user.username,
     );
     subscription.emailMessage = subscription.emailMessage.replaceAll(
-      '[INSTRUCTOR_NAME]',
+      "[INSTRUCTOR_NAME]",
       instructor_name,
     );
     subscription.emailMessage = subscription.emailMessage.replaceAll(
-      '[PASSWORD]',
+      "[PASSWORD]",
       user.password,
     );
     subscription.emailMessage = subscription.emailMessage.replaceAll(
-      '[CENTER_NAME]',
+      "[CENTER_NAME]",
       center_name,
     );
     subscription.emailMessage = subscription.emailMessage.replaceAll(
-      '[INSTRUCTOR_ID]',
+      "[INSTRUCTOR_ID]",
       instructor_id,
     );
     subscription.emailMessage = subscription.emailMessage.replaceAll(
-      '[POINTS]',
+      "[POINTS]",
       subscription.points.toString(),
     );
 
     await this.subscriptionsService.emailService.sendEmail(
       user.username,
-      'Certificates Subscription Success',
-      'Congratulations on your subscription',
+      "Certificates Subscription Success",
+      "Congratulations on your subscription",
       subscription.emailMessage,
       [],
     );
-    if (this.configService.get('MAIN_EMAIL')) {
+    if (this.configService.get("MAIN_EMAIL")) {
       await this.subscriptionsService.emailService.sendEmail(
-        this.configService.get('MAIN_EMAIL'),
+        this.configService.get("MAIN_EMAIL"),
         `New Subscriber You Eran :[${subscription.price}$] By` +
           subscription.name,
-        'User ' +
+        "User " +
           user.username +
-          ' has subscribed to ' +
+          " has subscribed to " +
           subscription.name +
-          ' you earn ' +
+          " you earn " +
           subscription.price +
-          'USD || ' +
-          'Time : ' +
+          "USD || " +
+          "Time : " +
           new Date().toLocaleString(),
-        'Congratulations on your subscription',
+        "Congratulations on your subscription",
         [],
       );
     }
@@ -269,7 +274,7 @@ export class UsersService {
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find({
-      select: ['id', 'username', 'role'], // We don't need to return the password
+      select: ["id", "username", "role"], // We don't need to return the password
     });
   }
 }

@@ -1,12 +1,12 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Subscription } from './entities/subscription.entity';
-import { Between, MoreThan, Repository } from 'typeorm';
-import { PaymentService } from '../payment/payment.service';
-import { UsersService } from '../users/users.service';
-import { EmailService } from '../email/email.service';
+import { forwardRef, Inject, Injectable } from "@nestjs/common";
+import { CreateSubscriptionDto } from "./dto/create-subscription.dto";
+import { UpdateSubscriptionDto } from "./dto/update-subscription.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Subscription } from "./entities/subscription.entity";
+import { Between, MoreThan, Repository } from "typeorm";
+import { PaymentService } from "../payment/payment.service";
+import { UsersService } from "../users/users.service";
+import { EmailService } from "../email/email.service";
 
 @Injectable()
 export class SubscriptionsService {
@@ -45,7 +45,7 @@ export class SubscriptionsService {
       where: {
         created_at: MoreThan(fromDate), // Filter by date range
       },
-      relations: ['users'],
+      relations: ["users"],
     });
 
     return subscriptions.reduce(
@@ -57,15 +57,25 @@ export class SubscriptionsService {
   async calculateMonthlyRevenue(): Promise<number> {
     const now = new Date();
     const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+    const endOfLastMonth = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      0,
+      23,
+      59,
+      59,
+    );
 
     // Use actual transaction data for revenue calculation
-    const result = await this.subscriptionRepository.query(`
+    const result = await this.subscriptionRepository.query(
+      `
       SELECT COALESCE(SUM(amount), 0) as total 
       FROM transactions 
       WHERE created_at BETWEEN ? AND ? 
       AND status = 'completed'
-    `, [startOfLastMonth.toISOString(), endOfLastMonth.toISOString()]);
+    `,
+      [startOfLastMonth.toISOString(), endOfLastMonth.toISOString()],
+    );
 
     return result[0]?.total || 0;
   }
@@ -91,7 +101,7 @@ export class SubscriptionsService {
       WHERE status = 'completed' AND type = 'subscription'
     `);
 
-    return parseFloat(result[0]?.total || '0');
+    return parseFloat(result[0]?.total || "0");
   }
 
   async calculateEarningsPerDay(
@@ -102,13 +112,13 @@ export class SubscriptionsService {
       where: {
         created_at: Between(fromDate, toDate), // Filter by date range
       },
-      relations: ['users'],
+      relations: ["users"],
     });
 
     const earningsPerDay: Record<string, number> = {};
     console.log(subscriptions);
     subscriptions.forEach((sub) => {
-      const date = sub.created_at.toISOString().split('T')[0]; // Get the date part (YYYY-MM-DD)
+      const date = sub.created_at.toISOString().split("T")[0]; // Get the date part (YYYY-MM-DD)
       if (!earningsPerDay[date]) {
         earningsPerDay[date] = 0;
       }
@@ -124,7 +134,7 @@ export class SubscriptionsService {
         created_at: MoreThan(fromDate), // Filter by date range
       },
       take: 10, // Get the top 5 subscriptions
-      relations: ['users'], // Include users in the query
+      relations: ["users"], // Include users in the query
     });
 
     // Sort subscriptions by the number of users in descending order
@@ -177,7 +187,7 @@ export class SubscriptionsService {
     // take last 10
     return this.subscriptionRepository.find({
       order: {
-        created_at: 'DESC',
+        created_at: "DESC",
       },
       take: 10,
     });
@@ -217,7 +227,7 @@ export class SubscriptionsService {
   findOne(id: number) {
     return this.subscriptionRepository.findOne({
       where: { id },
-      relations: ['users'],
+      relations: ["users"],
     });
   }
 
