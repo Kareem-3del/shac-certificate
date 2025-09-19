@@ -5,8 +5,8 @@ import {
   JoinTable,
   ManyToMany,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from '../../users/user.entity';
+} from "typeorm";
+import { User } from "../../users/user.entity";
 
 @Entity()
 export class Subscription {
@@ -40,12 +40,12 @@ export class Subscription {
 
   @Column({
     default:
-      'Welcome to our website your password is [PASSWORD] , email: [EMAIL]',
+      "Welcome to our website your password is [PASSWORD] , email: [EMAIL]",
   })
   emailMessage: string;
 
   @ManyToMany(() => User, (user) => user.subscriptions, {
-    cascade: ['remove'],
+    cascade: ["remove"],
   })
   @JoinTable()
   users: User[];

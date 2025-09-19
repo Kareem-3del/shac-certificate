@@ -1,10 +1,10 @@
-import { DynamicModule, forwardRef, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { StripeService } from './stripe.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Transaction } from '../entities/transaction.entity';
-import { StripeController } from './stripe.controller';
-import { SubscriptionsModule } from '../../subscriptions/subscriptions.module';
+import { DynamicModule, forwardRef, Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { StripeService } from "./stripe.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Transaction } from "../entities/transaction.entity";
+import { StripeController } from "./stripe.controller";
+import { SubscriptionsModule } from "../../subscriptions/subscriptions.module";
 
 @Module({
   imports: [
@@ -26,9 +26,9 @@ export class StripeModule {
       ],
       providers: [
         {
-          provide: 'STRIPE_SECRET_KEY',
+          provide: "STRIPE_SECRET_KEY",
           useFactory: async (configService: ConfigService) =>
-            configService.get('STRIPE_SECRET_KEY'),
+            configService.get("STRIPE_SECRET_KEY"),
           inject: [ConfigService],
         },
         StripeService,

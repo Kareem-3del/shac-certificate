@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { core, orders } from '@paypal/checkout-server-sdk';
-import { PayPalHttpClient } from '@paypal/checkout-server-sdk/lib/core/paypal_http_client';
-import { SubscriptionsService } from '../../subscriptions/subscriptions.service';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { core, orders } from "@paypal/checkout-server-sdk";
+import { PayPalHttpClient } from "@paypal/checkout-server-sdk/lib/core/paypal_http_client";
+import { SubscriptionsService } from "../../subscriptions/subscriptions.service";
 
 @Injectable()
 export class PaypalService {
@@ -14,8 +14,8 @@ export class PaypalService {
   ) {
     this.paypalClient = new core.PayPalHttpClient(
       new core.LiveEnvironment(
-        this.configService.get<string>('PAYPAL_CLIENT_ID'),
-        this.configService.get<string>('PAYPAL_CLIENT_SECRET'),
+        this.configService.get<string>("PAYPAL_CLIENT_ID"),
+        this.configService.get<string>("PAYPAL_CLIENT_SECRET"),
       ),
     );
   }
@@ -37,33 +37,33 @@ export class PaypalService {
       instructor_id,
       center_name,
     };
-    request.prefer('return=representation');
+    request.prefer("return=representation");
     request.requestBody({
-      intent: 'CAPTURE',
+      intent: "CAPTURE",
       purchase_units: [
         {
           amount: {
-            currency_code: 'USD',
+            currency_code: "USD",
             value: price.toFixed(2),
           },
-          description: name || 'Add Points',
+          description: name || "Add Points",
           custom_id: JSON.stringify(metadata),
           invoice_id: `INVOICE-${subId}`,
         },
       ],
       application_context: {
-        brand_name: 'Certificates',
-        landing_page: 'BILLING',
-        user_action: 'PAY_NOW',
-        return_url: `${this.configService.get<string>('BASE_URL')}/paypal/payment-success`,
-        cancel_url: `${this.configService.get<string>('BASE_URL')}/paypal/payment-cancel`,
+        brand_name: "Certificates",
+        landing_page: "BILLING",
+        user_action: "PAY_NOW",
+        return_url: `${this.configService.get<string>("BASE_URL")}/paypal/payment-success`,
+        cancel_url: `${this.configService.get<string>("BASE_URL")}/paypal/payment-cancel`,
       },
     });
 
     const response = await this.paypalClient.execute(request);
     console.log(response.result);
     return response.result.links.find(
-      (link: { rel: string }) => link.rel === 'approve',
+      (link: { rel: string }) => link.rel === "approve",
     ).href;
   }
 }

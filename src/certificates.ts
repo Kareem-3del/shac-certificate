@@ -1,4 +1,4 @@
-import * as path from 'path';
+import * as path from "path";
 
 export interface TemplatePosition {
   scale?: number;
@@ -85,8 +85,8 @@ export interface TemplateData {
   cert_card?: TemplatePosition;
 }
 export const Template_1: TemplateData = {
-  image_cert: path.resolve('./views/templates/v2/template-1.jpg'),
-  image_id: path.resolve('./views/templates/v2/card.jpg'),
+  image_cert: path.resolve("./views/templates/v2/template-1.jpg"),
+  image_id: path.resolve("./views/templates/v2/card.jpg"),
   settings: 1,
 
   id_card: {
@@ -209,8 +209,8 @@ export const Template_1: TemplateData = {
   },
 };
 export const Template_2: TemplateData = {
-  image_cert: path.resolve('./views/templates/v2/template-2.jpg'),
-  image_id: path.resolve('./views/templates/v2/card.jpg'),
+  image_cert: path.resolve("./views/templates/v2/template-2.jpg"),
+  image_id: path.resolve("./views/templates/v2/card.jpg"),
   settings: 2,
 
   id_card: {
@@ -332,8 +332,8 @@ export const Template_2: TemplateData = {
   },
 };
 export const Template_3: TemplateData = {
-  image_cert: path.resolve('./views/templates/v2/template-3.jpg'),
-  image_id: path.resolve('./views/templates/v2/card.jpg'),
+  image_cert: path.resolve("./views/templates/v2/template-3.jpg"),
+  image_id: path.resolve("./views/templates/v2/card.jpg"),
   settings: 3,
 
   id_card: {
@@ -455,8 +455,8 @@ export const Template_3: TemplateData = {
   },
 };
 export const Template_4: TemplateData = {
-  image_cert: path.resolve('./views/templates/v2/template-4.jpg'),
-  image_id: path.resolve('./views/templates/v2/card.jpg'),
+  image_cert: path.resolve("./views/templates/v2/template-4.jpg"),
+  image_id: path.resolve("./views/templates/v2/card.jpg"),
   settings: 4,
 
   id_card: {
@@ -578,8 +578,8 @@ export const Template_4: TemplateData = {
   },
 };
 export const Template_5: TemplateData = {
-  image_cert: path.resolve('./views/templates/v2/template-5.jpg'),
-  image_id: path.resolve('./views/templates/v2/card.jpg'),
+  image_cert: path.resolve("./views/templates/v2/template-5.jpg"),
+  image_id: path.resolve("./views/templates/v2/card.jpg"),
   settings: 5,
 
   id_card: {
@@ -701,8 +701,8 @@ export const Template_5: TemplateData = {
   },
 };
 export const Template_6: TemplateData = {
-  image_cert: path.resolve('./views/templates/v2/template-6.jpg'),
-  image_id: path.resolve('./views/templates/v2/card.jpg'),
+  image_cert: path.resolve("./views/templates/v2/template-6.jpg"),
+  image_id: path.resolve("./views/templates/v2/card.jpg"),
   settings: 6,
 
   id_card: {
@@ -824,8 +824,8 @@ export const Template_6: TemplateData = {
   },
 };
 export const Template_7: TemplateData = {
-  image_cert: path.resolve('./views/templates/v2/template-7.jpg'),
-  image_id: path.resolve('./views/templates/v2/card.jpg'),
+  image_cert: path.resolve("./views/templates/v2/template-7.jpg"),
+  image_id: path.resolve("./views/templates/v2/card.jpg"),
   settings: 7,
 
   id_card: {
@@ -948,8 +948,8 @@ export const Template_7: TemplateData = {
   },
 };
 export const Template_8: TemplateData = {
-  image_cert: path.resolve('./views/templates/v3/2.jpg'),
-  image_id: path.resolve('./views/templates/v3/2-id.jpg'),
+  image_cert: path.resolve("./views/templates/v3/2.jpg"),
+  image_id: path.resolve("./views/templates/v3/2-id.jpg"),
   settings: 7,
 
   id_card: {
@@ -1078,8 +1078,8 @@ export const Template_8: TemplateData = {
 };
 
 export const Template_9: TemplateData = {
-  image_cert: path.resolve('./views/templates/v3/1.png'),
-  image_id: path.resolve('./views/templates/v3/1-id.png'),
+  image_cert: path.resolve("./views/templates/v3/1.png"),
+  image_id: path.resolve("./views/templates/v3/1-id.png"),
   settings: 7,
 
   cert_card: {

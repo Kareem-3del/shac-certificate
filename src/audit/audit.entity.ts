@@ -5,12 +5,12 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-} from 'typeorm';
-import { User } from '../users/user.entity';
+} from "typeorm";
+import { User } from "../users/user.entity";
 
-@Entity('audit_logs')
+@Entity("audit_logs")
 export class AuditLog {
-  @PrimaryGeneratedColumn('increment')
+  @PrimaryGeneratedColumn("increment")
   id: number;
 
   @Column()
@@ -22,10 +22,10 @@ export class AuditLog {
   @Column({ nullable: true })
   entity_id: string;
 
-  @Column('text', { nullable: true })
+  @Column("text", { nullable: true })
   details: string;
 
-  @Column('json', { nullable: true })
+  @Column("json", { nullable: true })
   changes: any;
 
   @Column({ nullable: true })
@@ -34,8 +34,8 @@ export class AuditLog {
   @Column({ nullable: true })
   user_agent: string;
 
-  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, { nullable: true, onDelete: "SET NULL" })
+  @JoinColumn({ name: "user_id" })
   user: User;
 
   @Column({ nullable: true })

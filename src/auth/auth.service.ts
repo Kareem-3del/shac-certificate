@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { JwtPayload } from './jwt-payload.interface';
-import { JwtService } from '@nestjs/jwt';
-import { EmailService } from '../email/email.service';
-import { User } from '../users/user.entity';
+import { Injectable } from "@nestjs/common";
+import { UsersService } from "../users/users.service";
+import { JwtPayload } from "./jwt-payload.interface";
+import { JwtService } from "@nestjs/jwt";
+import { EmailService } from "../email/email.service";
+import { User } from "../users/user.entity";
 
 @Injectable()
 export class AuthService {
@@ -41,8 +41,8 @@ export class AuthService {
   sendPassword(user: User) {
     return this.emailService.sendEmail(
       user.username,
-      'Password Recovery',
-      'Password Recovery',
+      "Password Recovery",
+      "Password Recovery",
       `Your password is: ${user.password}`,
       [],
     );

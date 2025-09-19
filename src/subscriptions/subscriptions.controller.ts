@@ -10,15 +10,15 @@ import {
   Res,
   Put,
   Query,
-} from '@nestjs/common';
-import { SubscriptionsService } from './subscriptions.service';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
-import { Response } from 'express';
-import { PaypalService } from '../payment/paypal/paypal.service';
-import { StripeService } from '../payment/stripe/stripe.service';
-import { Payid19Service } from '../payment/payid19/payid19.service';
-@Controller('subscriptions')
+} from "@nestjs/common";
+import { SubscriptionsService } from "./subscriptions.service";
+import { CreateSubscriptionDto } from "./dto/create-subscription.dto";
+import { UpdateSubscriptionDto } from "./dto/update-subscription.dto";
+import { Response } from "express";
+import { PaypalService } from "../payment/paypal/paypal.service";
+import { StripeService } from "../payment/stripe/stripe.service";
+import { Payid19Service } from "../payment/payid19/payid19.service";
+@Controller("subscriptions")
 export class SubscriptionsController {
   constructor(
     private readonly subscriptionsService: SubscriptionsService,
@@ -31,8 +31,8 @@ export class SubscriptionsController {
   findAll() {
     return this.subscriptionsService.findAll();
   }
-  @Get('analysis')
-  async analysis(@Query('days') days: number) {
+  @Get("analysis")
+  async analysis(@Query("days") days: number) {
     const fromDate = new Date();
     fromDate.setDate(fromDate.getDate() - days); // Set the start date to the past 'days'
 
@@ -46,7 +46,7 @@ export class SubscriptionsController {
       growth,
       totalSubscriptions,
       recentSubscriptions,
-      earningsPerDay
+      earningsPerDay,
     ] = await Promise.all([
       this.subscriptionsService.calculateTotalEarnings(fromDate),
       this.subscriptionsService.getTotalSubscriptionRevenue(),
@@ -57,7 +57,7 @@ export class SubscriptionsController {
       this.subscriptionsService.calculateGrowth(fromDate),
       this.subscriptionsService.totalSubscriptions(fromDate),
       this.subscriptionsService.recentSubscriptions(),
-      this.subscriptionsService.calculateEarningsPerDay(fromDate, new Date())
+      this.subscriptionsService.calculateEarningsPerDay(fromDate, new Date()),
     ]);
 
     return {
@@ -74,18 +74,18 @@ export class SubscriptionsController {
     };
   }
 
-  @Get(':id')
-  @Render('subscription')
-  async findOne(@Param('id') id: string) {
+  @Get(":id")
+  @Render("subscription")
+  async findOne(@Param("id") id: string) {
     const sub = await this.subscriptionsService.findOne(+id);
     if (!sub) {
       return {
         error: true,
         sub: {
-          id: 'Not Found',
-          name: 'Not found',
-          price: 'Not Found',
-          points: 'Not Found',
+          id: "Not Found",
+          name: "Not found",
+          price: "Not Found",
+          points: "Not Found",
         },
       };
     }
@@ -93,55 +93,55 @@ export class SubscriptionsController {
     return { sub, error: false };
   }
 
-  @Get('json/:id')
-  async findOneJson(@Param('id') id: string) {
+  @Get("json/:id")
+  async findOneJson(@Param("id") id: string) {
     const sub = await this.subscriptionsService.findOne(+id);
     if (!sub) {
       return {
         error: true,
         sub: {
-          id: 'Not Found',
-          name: 'Not found',
-          price: 'Not Found',
-          points: 'Not Found',
+          id: "Not Found",
+          name: "Not found",
+          price: "Not Found",
+          points: "Not Found",
         },
       };
     }
     return sub;
   }
 
-  @Post(':id/checkout')
+  @Post(":id/checkout")
   async checkout(
-    @Param('id') id: string,
-    @Body('email') email: string,
-    @Body('instructor_id') instructor_id: string,
-    @Body('instructor_name') instructor_name: string,
-    @Body('center_name') center_name: string,
-    @Body('pay_with') pay_with: string,
+    @Param("id") id: string,
+    @Body("email") email: string,
+    @Body("instructor_id") instructor_id: string,
+    @Body("instructor_name") instructor_name: string,
+    @Body("center_name") center_name: string,
+    @Body("pay_with") pay_with: string,
     @Res() res: Response,
   ) {
     try {
       const sub = await this.subscriptionsService.findOne(+id);
-      console.log(sub, 'sub');
+      console.log(sub, "sub");
       if (!sub) {
-        throw new HttpException('Subscription not found', 404);
+        throw new HttpException("Subscription not found", 404);
       }
       let url = null;
       switch (pay_with) {
-        case 'crypto':
+        case "crypto":
           if (!email) {
-            throw new HttpException('Email is required', 400);
+            throw new HttpException("Email is required", 400);
           }
           url = await this.payid19Service.createInvoice(
             sub.price,
             sub.id.toString(),
             sub.id,
-            sub.name + ' Subscription ' + sub.points + ' Points',
-            'Subscription for ' +
+            sub.name + " Subscription " + sub.points + " Points",
+            "Subscription for " +
               sub.name +
-              ' with ' +
+              " with " +
               instructor_name +
-              ' at ' +
+              " at " +
               center_name,
             {
               email,
@@ -154,15 +154,15 @@ export class SubscriptionsController {
           );
           res.redirect(url);
           return { sub, error: false, email, url };
-        case 'stripe':
+        case "stripe":
           if (!email) {
-            throw new HttpException('Email is required', 400);
+            throw new HttpException("Email is required", 400);
           }
           url = await this.stripeService.createPaymentLink(
             email,
             sub.price,
             sub.id.toString(),
-            sub.name + ' Subscription ' + sub.points + ' Points',
+            sub.name + " Subscription " + sub.points + " Points",
             instructor_name,
             instructor_id,
             center_name,
@@ -174,7 +174,7 @@ export class SubscriptionsController {
             email,
             sub.price,
             sub.id.toString(),
-            sub.name + ' Subscription ' + sub.points + ' Points',
+            sub.name + " Subscription " + sub.points + " Points",
             instructor_name,
             instructor_id,
             center_name,
@@ -183,8 +183,8 @@ export class SubscriptionsController {
       res.redirect(url);
       return { sub, error: false, email, url };
     } catch (e) {
-      console.log(e, 'error');
-      res.render('payment-failed', { error: e.message });
+      console.log(e, "error");
+      res.render("payment-failed", { error: e.message });
     }
   }
 
@@ -192,20 +192,20 @@ export class SubscriptionsController {
   create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
     return this.subscriptionsService.create(createSubscriptionDto);
   }
-  @Put(':id')
+  @Put(":id")
   update(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() updateSubscriptionDto: UpdateSubscriptionDto,
   ) {
     return this.subscriptionsService.update(+id, updateSubscriptionDto);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: string) {
-    console.log('Removing subscription with id', id);
+  @Delete(":id")
+  async remove(@Param("id") id: string) {
+    console.log("Removing subscription with id", id);
     const sub = await this.subscriptionsService.findOne(+id);
     if (!sub) {
-      throw new HttpException('Subscription not found', 404);
+      throw new HttpException("Subscription not found", 404);
     }
     if (sub.users.length > 0) {
       // delete subscription from users
