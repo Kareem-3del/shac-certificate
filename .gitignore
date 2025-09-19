@@ -17,10 +17,15 @@ out/
 .env.test.local
 .env.production.local
 
-# Database
-*.sqlite
+# Database - ignore old/backup files but include main database
+*.sqlite2
 *.sqlite3
+*.sqlite6
+database2.sqlite
 *.db
+
+# Allow main database file
+!database.sqlite
 
 # Logs
 logs/
