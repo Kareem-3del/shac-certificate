@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit User - <%= targetUser.username %> - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --color-primary: 59 130 246;
+      --color-secondary: 99 102 241;
+      --color-accent: 34 197 94;
+      --color-background: 249 250 251;
+      --color-surface: 255 255 255;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen" style="background-color: rgb(var(--color-background))">
+  <div class="flex">
+    <!-- Sidebar -->
+    <nav class="w-64 min-h-screen shadow-lg" style="background-color: rgb(var(--color-surface))">
+      <div class="p-6">
+        <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">Dashboard</h1>
+      </div>
+      <ul class="mt-6">
+        <li><a href="/dashboard" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+          </svg>
+          Overview
+        </a></li>
+        <li><a href="/dashboard/certificates" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Certificates
+        </a></li>
+        <li><a href="/dashboard/users" class="flex items-center px-6 py-3 text-blue-600 bg-blue-50 border-r-2 border-blue-600">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+          </svg>
+          Users
+        </a></li>
+        <li><a href="/dashboard/advertising" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          Advertising ROI
+        </a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <nav class="text-sm text-gray-500 mb-2">
+            <a href="/dashboard/users/list" class="hover:text-blue-600">Users</a>
+            <span class="mx-2">/</span>
+            <a href="/dashboard/users/<%= targetUser.id %>" class="hover:text-blue-600"><%= targetUser.username %></a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-900">Edit</span>
+          </nav>
+          <h1 class="text-3xl font-bold text-gray-900">Edit User</h1>
+          <p class="text-gray-600 mt-2">Update user account information and permissions</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="/dashboard/users/<%= targetUser.id %>" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            Cancel
+          </a>
+          <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center">
+            <span class="text-white text-sm font-medium"><%= user.username.charAt(0).toUpperCase() %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit Form -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Form -->
+        <div class="lg:col-span-2">
+          <form action="/dashboard/users/<%= targetUser.id %>/edit" method="POST" class="space-y-6">
+            <!-- Basic Information -->
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300">
+              <h3 class="text-lg font-semibold text-gray-900 mb-6">Basic Information</h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+                    Username <span class="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value="<%= targetUser.username %>"
+                    required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="Enter username"
+                  >
+                </div>
+
+                <div>
+                  <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="Leave blank to keep current password"
+                  >
+                  <p class="text-xs text-gray-500 mt-1">Leave blank to keep current password</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Permissions & Settings -->
+            <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300">
+              <h3 class="text-lg font-semibold text-gray-900 mb-6">Permissions & Settings</h3>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
+                    Role <span class="text-red-500">*</span>
+                  </label>
+                  <select
+                    id="role"
+                    name="role"
+                    required
+                    <% if (user.role !== 'admin') { %>disabled<% } %>
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors <%= user.role !== 'admin' ? 'bg-gray-50 cursor-not-allowed' : '' %>"
+                  >
+                    <option value="customer" <%= targetUser.role === 'customer' ? 'selected' : '' %>>Customer</option>
+                    <option value="moderator" <%= targetUser.role === 'moderator' ? 'selected' : '' %>>Moderator</option>
+                    <% if (user.role === 'admin') { %>
+                    <option value="admin" <%= targetUser.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                    <% } %>
+                  </select>
+                  <% if (user.role !== 'admin') { %>
+                  <p class="text-xs text-gray-500 mt-1">Only admins can change user roles</p>
+                  <% } %>
+                </div>
+
+                <div>
+                  <label for="points" class="block text-sm font-medium text-gray-700 mb-2">
+                    Points Balance
+                  </label>
+                  <input
+                    type="number"
+                    id="points"
+                    name="points"
+                    value="<%= targetUser.points || 0 %>"
+                    min="0"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    placeholder="Enter points balance"
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Role Information -->
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+              <h4 class="text-sm font-medium text-blue-800 mb-2">Role Permissions</h4>
+              <div class="text-sm text-blue-700">
+                <div id="role-info">
+                  <% if (targetUser.role === 'admin') { %>
+                  <p><strong>Admin:</strong> Full system access, can manage all users, certificates, and settings.</p>
+                  <% } else if (targetUser.role === 'moderator') { %>
+                  <p><strong>Moderator:</strong> Can manage customers and certificates, but cannot delete admins or change admin settings.</p>
+                  <% } else { %>
+                  <p><strong>Customer:</strong> Can generate and view their own certificates, limited system access.</p>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end space-x-4">
+              <a href="/dashboard/users/<%= targetUser.id %>" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancel
+              </a>
+              <button type="submit" class="px-6 py-2 gradient-bg text-white rounded-lg hover:opacity-90 transition-opacity">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="space-y-6">
+          <!-- Current User Info -->
+          <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Current Information</h3>
+            <div class="space-y-3">
+              <div>
+                <span class="text-sm text-gray-500">Username</span>
+                <p class="font-medium text-gray-900"><%= targetUser.username %></p>
+              </div>
+              <div>
+                <span class="text-sm text-gray-500">Current Role</span>
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+                  <%= targetUser.role === 'admin' ? 'bg-red-100 text-red-800' : 
+                      targetUser.role === 'moderator' ? 'bg-yellow-100 text-yellow-800' : 
+                      'bg-green-100 text-green-800' %>">
+                  <%= targetUser.role.charAt(0).toUpperCase() + targetUser.role.slice(1) %>
+                </span>
+              </div>
+              <div>
+                <span class="text-sm text-gray-500">Points</span>
+                <p class="font-medium text-gray-900"><%= targetUser.points || 0 %> points</p>
+              </div>
+              <div>
+                <span class="text-sm text-gray-500">Member Since</span>
+                <p class="font-medium text-gray-900">
+                  <%= targetUser.created_at ? new Date(targetUser.created_at).toLocaleDateString() : 'Unknown' %>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Warnings -->
+          <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-6">
+            <h4 class="text-sm font-medium text-yellow-800 mb-2">⚠️ Important Notes</h4>
+            <ul class="text-sm text-yellow-700 space-y-1">
+              <li>• Changes take effect immediately</li>
+              <li>• Role changes affect user permissions</li>
+              <li>• Password changes require user to re-login</li>
+              <% if (user.role !== 'admin') { %>
+              <li>• You cannot edit admin users</li>
+              <% } %>
+            </ul>
+          </div>
+
+          <!-- Help -->
+          <div class="bg-gray-50 rounded-xl p-6">
+            <h4 class="text-sm font-medium text-gray-800 mb-2">Need Help?</h4>
+            <p class="text-sm text-gray-600 mb-3">Having trouble editing this user?</p>
+            <a href="/help" class="text-sm text-blue-600 hover:text-blue-800 transition-colors">
+              View Help Documentation →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Update role information dynamically
+    document.getElementById('role').addEventListener('change', function() {
+      const roleInfo = document.getElementById('role-info');
+      const role = this.value;
+      
+      let infoText = '';
+      switch(role) {
+        case 'admin':
+          infoText = '<p><strong>Admin:</strong> Full system access, can manage all users, certificates, and settings.</p>';
+          break;
+        case 'moderator':
+          infoText = '<p><strong>Moderator:</strong> Can manage customers and certificates, but cannot delete admins or change admin settings.</p>';
+          break;
+        case 'customer':
+          infoText = '<p><strong>Customer:</strong> Can generate and view their own certificates, limited system access.</p>';
+          break;
+      }
+      
+      roleInfo.innerHTML = infoText;
+    });
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const username = document.getElementById('username').value.trim();
+      if (!username) {
+        alert('Username is required');
+        e.preventDefault();
+        return;
+      }
+      
+      if (username.length < 3) {
+        alert('Username must be at least 3 characters long');
+        e.preventDefault();
+        return;
+      }
+    });
+  </script>
+</body>
+</html>

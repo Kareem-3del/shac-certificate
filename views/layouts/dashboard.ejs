@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'Dashboard' %> - Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <% if (includeChartJS) { %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <% } %>
+  <style>
+    :root {
+      --color-primary: 59 130 246;
+      --color-secondary: 99 102 241;
+      --color-accent: 34 197 94;
+      --color-background: 249 250 251;
+      --color-surface: 255 255 255;
+    }
+    
+    * {
+      font-family: "Inter", sans-serif;
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    }
+
+    .nav-active {
+      color: rgb(37 99 235);
+      background-color: rgb(219 234 254);
+      border-right: 2px solid rgb(37 99 235);
+    }
+    
+    .animate-fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgb(var(--color-surface)) 0%, rgb(248 250 252) 100%);
+      border: 1px solid rgb(226 232 240);
+    }
+    
+    .nav-item {
+      transition: all 0.2s ease;
+    }
+    
+    .nav-item:hover {
+      background-color: rgb(241 245 249);
+      border-left: 4px solid rgb(var(--color-primary));
+    }
+    
+    .nav-item.active {
+      background-color: rgb(239 246 255);
+      border-left: 4px solid rgb(37 99 235);
+      color: rgb(29 78 216);
+    }
+    
+    <% if (additionalStyles) { %>
+    <%- additionalStyles %>
+    <% } %>
+  </style>
+</head>
+<body class="min-h-screen" style="background-color: rgb(var(--color-background))">
+  <!-- Top Navigation -->
+  <nav class="shadow-sm border-b fixed w-full top-0 z-50" style="background-color: rgb(var(--color-surface)); border-color: rgb(229 231 235)">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <img class="h-8 w-auto" src="https://shacpr.org.sa/images/sha.png" alt="SHA Logo">
+          <div class="ml-4">
+            <h1 class="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span class="text-sm text-gray-500">Live</span>
+          </div>
+          <div class="text-sm text-gray-600">
+            <i class="fas fa-calendar mr-1"></i>
+            <span id="currentDate"></span>
+          </div>
+          <a href="/" class="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+            <i class="fas fa-home mr-1"></i>Main Site
+          </a>
+          <a href="/auth/logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+            <i class="fas fa-sign-out-alt mr-1"></i>Logout
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex pt-16">
+    <%- include('../partials/dashboard-sidebar') %>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+      <%- include('../partials/dashboard-header') %>
+
+      <!-- Page Content -->
+      <%- body %>
+    </div>
+  </div>
+
+  <script>
+    // Update current date
+    document.addEventListener('DOMContentLoaded', function() {
+      const now = new Date();
+      const dateString = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric', 
+        month: 'long',
+        day: 'numeric'
+      });
+      const dateElement = document.getElementById('currentDate');
+      if (dateElement) {
+        dateElement.textContent = dateString;
+      }
+    });
+  </script>
+
+<%- include('../partials/dashboard-footer') %>

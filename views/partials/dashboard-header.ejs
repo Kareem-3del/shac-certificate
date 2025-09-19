@@ -1,0 +1,29 @@
+<div class="flex justify-between items-center mb-8">
+  <div>
+    <% if (breadcrumbs && breadcrumbs.length > 0) { %>
+    <nav class="text-sm mb-2" style="color: rgb(107 114 128)">
+      <% breadcrumbs.forEach((crumb, index) => { %>
+        <% if (index > 0) { %><span class="mx-2">/</span><% } %>
+        <% if (crumb.url && index < breadcrumbs.length - 1) { %>
+          <a href="<%= crumb.url %>" class="hover:text-blue-600"><%= crumb.label %></a>
+        <% } else { %>
+          <span class="<%= index === breadcrumbs.length - 1 ? 'text-gray-900' : '' %>"><%= crumb.label %></span>
+        <% } %>
+      <% }); %>
+    </nav>
+    <% } %>
+    <h1 class="text-3xl font-bold text-gray-900"><%= pageTitle || title %></h1>
+    <% if (pageDescription) { %>
+    <p class="text-gray-600 mt-2"><%= pageDescription %></p>
+    <% } %>
+  </div>
+  <div class="flex items-center space-x-4">
+    <% if (headerActions) { %>
+    <%- headerActions %>
+    <% } %>
+    <span class="text-sm" style="color: rgb(107 114 128)">Last updated: <span id="lastUpdated"></span></span>
+    <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center">
+      <span class="text-white text-sm font-medium"><%= user.username.charAt(0).toUpperCase() %></span>
+    </div>
+  </div>
+</div>

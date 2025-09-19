@@ -1,0 +1,30 @@
+<%- include('../partials/dashboard-header') %>
+<%- include('../partials/dashboard-sidebar') %>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div class="bg-white rounded-xl shadow-sm p-6">
+    <h3>Revenue</h3>
+    <p>$<%= overview.revenue.total %></p>
+    <p><%= overview.revenue.growth %>% growth</p>
+  </div>
+  
+  <div class="bg-white rounded-xl shadow-sm p-6">
+    <h3>Certificates</h3>
+    <p><%= overview.certificates.total %></p>
+    <p><%= overview.certificates.growth %> growth</p>
+  </div>
+  
+  <div class="bg-white rounded-xl shadow-sm p-6">
+    <h3>Users</h3>
+    <p><%= overview.users.total %></p>
+    <p><%= overview.users.growth %> today</p>
+  </div>
+  
+  <div class="bg-white rounded-xl shadow-sm p-6">
+    <h3>Advertising ROI</h3>
+    <p><%= overview.advertising.roi %>%</p>
+    <p><%= overview.advertising.trend %>% trend</p>
+  </div>
+</div>
+
+<%- include('../partials/dashboard-footer') %>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .card {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .divider {
+            border-top: 1px solid #e2e8f0;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <button onclick="window.location.href = '/'" id="main-link" class="text-xl font-semibold text-gray-700">Dashboard</button>
+            <div>
+                <a href="#" class="px-4 py-2 text-gray-600 hover:text-gray-800">Settings</a>
+                <a href="#" class="px-4 py-2 text-gray-600 hover:text-gray-800">Certificates</a>
+                <a href="#" class="px-4 py-2 text-gray-600 hover:text-gray-800">Users</a>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <aside class="bg-white shadow-md w-64 py-6">
+            <nav class="px-4">
+                <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Settings</a>
+                <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Certificates</a>
+                <a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Users</a>
+            </nav>
+            <div class="flex flex-col">
+                <a href="/settings/email/" id="logoutBtn" class="px-8 py-2 text-gray-600 hover:text-gray-800 w-full">Bulk
+                    Mail</a>
+                <a href="/settings/sub/" id="logoutBtn" class="px-8 py-2 text-gray-600 hover:text-gray-800 w-full">Subscriptions</a>
+                <a href="/auth/logout/" id="logoutBtn"
+                   class="px-8 py-2 text-gray-600 hover:text-gray-800 w-full">Logout</a>
+
+            </div>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 bg-gray-100 p-8">
+            <section id="settings" class="hidden">
+                <h1 class="text-2xl font-semibold mb-6">Update Settings</h1>
+                <% settings.forEach(setting => { %>
+                    <div class="card p-6 mb-6 bg-white shadow-lg rounded-lg">
+                        <h2 class="text-2xl font-bold mb-6 text-gray-800">Settings for <%= setting.name %></h2>
+
+                        <form action="/settings/<%= setting.id %>" method="POST">
+                            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+
+                                <!-- Input Field -->
+                                <div class="mb-6">
+                                    <label for="name-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Name</label>
+                                    <input type="text" id="name-<%= setting.id %>" name="name"
+                                           value="<%= setting.name %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"
+                                    >
+                                </div>
+
+                                <!-- Email Subject Field -->
+                                <div class="mb-6">
+                                    <label for="emailSubject-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Email Subject</label>
+                                    <input type="text" id="emailSubject-<%= setting.id %>" name="emailSubject"
+                                           value="<%= setting.emailSubject %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out">
+                                </div>
+
+                                <!-- Email Body Field -->
+                                <div class="mb-6">
+                                    <label for="emailBody-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Email Body</label>
+                                    <textarea id="emailBody-<%= setting.id %>" name="emailBody" rows="4"
+                                              class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"><%= setting.emailBody %></textarea>
+                                </div>
+
+                                <!-- Instructor Name Field -->
+                                <div class="mb-6">
+                                    <label for="instructorName-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Instructor Name</label>
+                                    <input type="text" id="instructorName-<%= setting.id %>" name="instructorName"
+                                           value="<%= setting.instructorName %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"
+                                    >
+                                </div>
+
+                                <!-- Instructor ID Field -->
+                                <div class="mb-6">
+                                    <label for="instructorId-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Instructor ID</label>
+                                    <input type="text" id="instructorId-<%= setting.id %>" name="instructorId"
+                                           value="<%= setting.instructorId %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"
+                                    >
+                                </div>
+
+                                <!-- Training Center Name Field -->
+                                <div class="mb-6">
+                                    <label for="trainingCenterName-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Training Center
+                                        Name</label>
+                                    <input type="text" id="trainingCenterName-<%= setting.id %>"
+                                           name="trainingCenterName" value="<%= setting.trainingCenterName %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"
+                                    >
+                                </div>
+
+                                <!-- Training Center ID Field -->
+                                <div class="mb-6">
+                                    <label for="trainingCenterId-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Training Center
+                                        ID</label>
+                                    <input type="text" id="trainingCenterId-<%= setting.id %>" name="trainingCenterId"
+                                           value="<%= setting.trainingCenterId %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"
+                                    >
+                                </div>
+
+                                <!-- TC City Field -->
+                                <div class="mb-6">
+                                    <label for="tcCity-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">TC City</label>
+                                    <input type="text" id="tcCity-<%= setting.id %>" name="tcCity"
+                                           value="<%= setting.tcCity %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"
+                                    >
+                                </div>
+
+                                <!-- Training Site Name Field -->
+                                <div class="mb-6">
+                                    <label for="trainingSiteName-<%= setting.id %>"
+                                           class="block text-gray-700 text-sm font-medium mb-2">Training Site
+                                        Name</label>
+                                    <input type="text" id="trainingSiteName-<%= setting.id %>" name="trainingSiteName"
+                                           value="<%= setting.trainingSiteName %>"
+                                           class="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-600 focus:ring-indigo-600 focus:outline-none transition duration-150 ease-in-out"
+                                    >
+                                </div>
+
+                            </div>
+
+                            <div class="mt-6 flex justify-end">
+                                <button type="submit"
+                                        class="bg-indigo-600 text-white px-6 py-3 rounded-md shadow-md hover:bg-indigo-700 transition duration-150 ease-in-out">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="divider border-t border-gray-300 my-6"></div>
+                <% }) %>
+
+            </section>
+
+
+            <section id="users" class="hidden">
+                <h1 class="text-2xl font-semibold mb-6">Users Section</h1>
+
+                <!-- Create User Form -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Create New User</h2>
+                    <form id="createUserForm" class="space-y-4">
+                        <div>
+                            <label for="username" class="block text-gray-700">Username:</label>
+                            <input type="text" id="username" name="username" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label for="password" class="block text-gray-700">Password:</label>
+                            <input type="password" id="password" name="password" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label for="role" class="block text-gray-700">Role:</label>
+                            <select id="role" name="role" class="w-full p-2 border rounded-lg">
+                                <option value="admin">Admin</option>
+                                <option value="moderator">Moderator</option>
+                                <option value="customer">Customer</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="points" class="block text-gray-700">Points:</label>
+                            <input type="number" id="points" name="points" value="100" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Create User</button>
+                    </form>
+                </div>
+
+                <!-- Users List -->
+                <div>
+                    <h2 class="text-xl font-semibold mb-4">Users List</h2>
+                    <table id="usersList" class="min-w-full bg-white border-collapse">
+                        <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b">ID</th>
+                            <th class="py-2 px-4 border-b">Username</th>
+                            <th class="py-2 px-4 border-b">Role</th>
+                            <th class="py-2 px-4 border-b">Points</th>
+                            <th class="py-2 px-4 border-b">Subscriptions</th>
+                            <th class="py-2 px-4 border-b">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Change Password Form -->
+                <div id="changePasswordSection" class="hidden mt-8">
+                    <h2 class="text-xl font-semibold mb-4">Change Password</h2>
+                    <form id="changePasswordForm" class="space-y-4">
+                        <div>
+                            <label for="userId" class="block text-gray-700">User ID:</label>
+                            <input type="text" id="userId" name="userId" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label for="newPassword" class="block text-gray-700">New Password:</label>
+                            <input type="password" id="newPassword" name="newPassword"
+                                   class="w-full p-2 border rounded-lg">
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg">Change Password
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Manage User Points -->
+                <div id="managePointsSection" class="hidden mt-8">
+                    <h2 class="text-xl font-semibold mb-4">Manage User Points</h2>
+                    <form id="managePointsForm" class="space-y-4">
+                        <div>
+                            <label for="pointsUserId" class="block text-gray-700">User ID:</label>
+                            <input type="text" id="pointsUserId" name="pointsUserId" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <div>
+                            <label for="newPoints" class="block text-gray-700">New Points:</label>
+                            <input type="number" id="newPoints" name="newPoints" class="w-full p-2 border rounded-lg">
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg">Update Points</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="certificates" class="hidden">
+                <h1 class="text-2xl font-semibold mb-6">Certificates
+                    <span id="count" class="mx-2 text-red-400"></span>
+                </h1>
+                <div id="message" class="text-green-400 px-4 py-2 mb-4"></div>
+                <button id="delete-selected-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg mb-4">Delete
+                    Selected
+                </button>
+                <a href="/certificates/export/all" class="px-4 py-2 bg-blue-500 text-white rounded-lg mb-4">
+                    Export All
+                </a>
+                <input type="text" id="searchInput" placeholder="Search certificates..."
+                       class="w-full p-2 border rounded-lg mb-4">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead>
+                        <tr>
+                            <th class="py-2 px-4 border-b"><input type="checkbox" id="selectAll"></th>
+                            <th class="py-2 px-4 border-b">ID</th>
+                            <th class="py-2 px-4 border-b">Name</th>
+                            <th class="py-2 px-4 border-b">Email</th>
+                            <th class="py-2 px-4 border-b">Created By</th>
+                            <th class="py-2 px-4 border-b">City</th>
+                            <th class="py-2 px-4 border-b">Training Site Name</th>
+                            <th class="py-2 px-4 border-b">Issued</th>
+                            <th class="py-2 px-4 border-b">Express</th>
+                            <th class="py-2 px-4 border-b">Instructor ID</th>
+                            <th class="py-2 px-4 border-b">Instructor Name</th>
+                            <th class="py-2 px-4 border-b">Renew By</th>
+                            <th class="py-2 px-4 border-b">Training Center Name</th>
+                            <th class="py-2 px-4 border-b">Training Center ID</th>
+                            <th class="py-2 px-4 border-b">Created At</th>
+                            <th class="py-2 px-4 border-b">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="certificatesList">
+                        <!-- Certificates will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button id="loadMoreBtn" class="hidden px-4 py-2 bg-blue-500 text-white rounded-lg mt-4">Load More
+                </button>
+            </section>
+
+
+        </main>
+    </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    async function loadUsers() {
+      try {
+        const response = await fetch("/users");
+        const users = await response.json();
+        const usersList = document.getElementById("usersList").getElementsByTagName('tbody')[0];
+        usersList.innerHTML = "";
+
+        users.forEach(user => {
+          // Format subscriptions as a comma-separated list
+          const subscriptions = user.subscriptions.map(sub => sub.name).join(", ");
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+        <td class="py-2 px-4">${user.id}</td>
+        <td class="py-2 px-4">${user.username}</td>
+        <td class="py-2 px-4">${user.role}</td>
+        <td class="py-2 px-4">${user.points || 0}</td>
+        <td class="py-2 px-4">${subscriptions}</td>
+        <td class="py-2 px-4">
+          <button class="text-red-500 hover:underline delete-btn mr-2" data-id="${user.id}">Delete</button>
+          <button class="text-blue-500 hover:underline change-password-btn mr-2" data-id="${user.id}">Change Password</button>
+          <button class="text-green-500 hover:underline manage-points-btn" data-id="${user.id}">Manage Points</button>
+        </td>
+      `;
+          usersList.appendChild(row);
+        });
+      } catch (error) {
+        console.error("Error loading users:", error);
+        alert("An error occurred while loading users.");
+      }
+    }
+
+    loadUsers();
+
+// Create User Form Submission
+    const createUserForm = document.getElementById("createUserForm");
+    createUserForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+      const points = parseInt(document.getElementById("points").value) || 0;
+      try {
+        const response = await fetch("/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password, role, points })
+        });
+        if (response.ok) {
+          document.getElementById("username").value = "";
+          document.getElementById("password").value = "";
+          document.getElementById("points").value = "100";
+          alert("User created successfully.");
+          loadUsers(); // Reload users list after creation
+        } else {
+          throw new Error("Failed to create user.");
+        }
+      } catch (error) {
+        console.error("Error creating user:", error);
+        alert("An error occurred while creating the user.");
+      }
+    });
+
+// Delete User Event Listener
+    document.getElementById("usersList").addEventListener("click", async (event) => {
+      if (event.target.classList.contains("delete-btn")) {
+        const userId = event.target.getAttribute("data-id");
+        if (confirm(`Are you sure you want to delete user ${userId}?`)) {
+          try {
+            const response = await fetch(`/users/${userId}`, {
+              method: "DELETE"
+            });
+            if (response.ok) {
+              // Remove the deleted user from the UI
+              event.target.closest("tr").remove();
+              alert(`User ${userId} deleted successfully.`);
+            } else {
+              throw new Error("Failed to delete user.");
+            }
+          } catch (error) {
+            console.error("Error deleting user:", error);
+            alert("An error occurred while deleting the user.");
+          }
+        }
+      } else if (event.target.classList.contains("change-password-btn")) {
+        const userId = event.target.getAttribute("data-id");
+        document.getElementById("changePasswordSection").classList.remove("hidden");
+        document.getElementById("userId").value = userId;
+      } else if (event.target.classList.contains("manage-points-btn")) {
+        const userId = event.target.getAttribute("data-id");
+        document.getElementById("managePointsSection").classList.remove("hidden");
+        document.getElementById("pointsUserId").value = userId;
+      }
+    });
+
+// Change Password Form Submission
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    changePasswordForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const userId = document.getElementById("userId").value;
+      const newPassword = document.getElementById("newPassword").value;
+      try {
+        const response = await fetch(`/users/${userId}/password`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ newPassword })
+        });
+        if (response.ok) {
+          document.getElementById("newPassword").value = "";
+          alert("Password changed successfully.");
+          document.getElementById("changePasswordSection").classList.add("hidden");
+          loadUsers(); // Reload users list after password change
+        } else {
+          alert("Failed to change password.");
+        }
+      } catch (error) {
+        console.error("Error changing password:", error);
+        alert("An error occurred while changing the password.");
+      }
+    });
+
+    // Manage Points Form Submission
+    const managePointsForm = document.getElementById("managePointsForm");
+    managePointsForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const userId = document.getElementById("pointsUserId").value;
+      const newPoints = parseInt(document.getElementById("newPoints").value) || 0;
+      try {
+        const response = await fetch(`/users/${userId}/points`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ points: newPoints })
+        });
+        if (response.ok) {
+          document.getElementById("newPoints").value = "";
+          alert("Points updated successfully.");
+          document.getElementById("managePointsSection").classList.add("hidden");
+          loadUsers(); // Reload users list after points update
+        } else {
+          alert("Failed to update points.");
+        }
+      } catch (error) {
+        console.error("Error updating points:", error);
+        alert("An error occurred while updating points.");
+      }
+    });
+
+    const sections = {
+      "Settings": document.getElementById("settings"),
+      "Certificates": document.getElementById("certificates"),
+      "Users": document.getElementById("users")
+    };
+
+    const navLinks = document.querySelectorAll("nav a");
+
+    navLinks.forEach(link => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        const sectionName = event.target.textContent;
+        Object.values(sections).forEach(section => section.classList.add("hidden"));
+        sections[sectionName].classList.remove("hidden");
+        if (sectionName === "Certificates") {
+          loadCertificates();
+        }
+      });
+    });
+
+
+    let offset = 0;
+    const limit = 1000000000;
+    let loading = false;
+
+    async function loadCertificates(searchQuery = "") {
+      if (loading) return;
+      loading = true;
+      const response = await fetch(`/certificates?limit=${limit}&offset=${offset}&search=${searchQuery}`);
+      const data = await response.json();
+      document.getElementById("count").innerHTML = data?.certificates?.length || 0;
+      const certificatesList = document.getElementById("certificatesList");
+      data.certificates.forEach(cert => {
+        const row = document.createElement("tr");
+        row.classList.add("bg-white", "border-b");
+        row.innerHTML = `
+                    <td class="py-2 px-4 border-b"><input value="${cert.id}" type="checkbox" class="certificateCheckbox"></td>
+                    <td class="py-2 px-4">${cert.id}</td>
+                    <td class="py-2 px-4">${cert.name}</td>
+                    <td class="py-2 px-4">${cert.email}</td>
+                    <td class="py-2 px-4">${cert.created_by_email || 'System'}</td>
+                    <td class="py-2 px-4">${cert.city}</td>
+                    <td class="py-2 px-4">${cert.training_site_name}</td>
+                    <td class="py-2 px-4">${new Date(cert.issued).toLocaleDateString("en-US")}</td>
+                    <td class="py-2 px-4">${new Date(cert.express).toLocaleDateString("en-US")}</td>
+                    <td class="py-2 px-4">${cert.instructor_id || ""}</td>
+                    <td class="py-2 px-4">${cert.instructor_name || ""}</td>
+                    <td class="py-2 px-4">${cert.renew_by || ""}</td>
+                    <td class="py-2 px-4">${cert.training_center_name || ""}</td>
+                    <td class="py-2 px-4">${cert.training_center_id || ""}</td>
+                    <td class="py-2 px-4">${new Date(cert.created_at).toLocaleDateString("en-US")}</td>
+                    <td class="py-2 px-4 flex flex-col text-center items-center justify-center">
+                        <a href="/certificates/verify/${cert.id}" class="text-blue-500 hover:underline mr-2 mb-1">View</a>
+                        <a href="/certificates/download/${cert.id}?type=full" class="text-green-500 hover:underline mr-2 mb-1">Download</a>
+                        <button class="text-red-500 hover:underline delete-btn mb-1" data-id="${cert.id}">Delete</button>
+                        <button class="text-green-500 hover:underline renew-btn mb-1" data-id="${cert.id}">Renew</button>
+                        <button class="text-black hover:underline resend-btn" data-id="${cert.id}">Send</button>
+                    </td>
+                `;
+        certificatesList.appendChild(row);
+      });
+      offset += limit;
+      loading = false;
+
+      // Show load more button if there are more certificates to load
+      if (offset < data.total) {
+        document.getElementById("loadMoreBtn").classList.remove("hidden");
+      } else {
+        document.getElementById("loadMoreBtn").classList.add("hidden");
+      }
+    }
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+      offset = 0;
+      document.getElementById("certificatesList").innerHTML = "";
+      loadCertificates(document.getElementById("searchInput").value);
+    });
+
+ /*   window.addEventListener("scroll", () => {
+      const { scrollTop, clientHeight, scrollHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - 20 && !loading) {
+        loadCertificates(document.getElementById("searchInput").value);
+      }
+    });*/
+
+    // Delete certificate event listener
+    document.getElementById("certificatesList").addEventListener("click", async (event) => {
+      if (event.target.classList.contains("delete-btn")) {
+        const certificateId = event.target.getAttribute("data-id");
+        if (confirm(`Are you sure you want to delete certificate ${certificateId}?`)) {
+          try {
+            const response = await fetch(`/certificates/${certificateId}`, {
+              method: "DELETE"
+            });
+            if (response.ok) {
+              // Remove the deleted certificate from the UI
+              event.target.closest("tr").remove();
+              // show message in top right corner
+              document.getElementById("message").innerText = `Certificate ${certificateId} deleted successfully.`;
+            } else {
+              throw new Error("Failed to delete certificate.");
+            }
+          } catch (error) {
+            console.error("Error deleting certificate:", error);
+            alert("An error occurred while deleting the certificate.");
+          }
+        }
+      }
+    });
+
+    document.getElementById("selectAll").onclick = (event) => {
+      const checkboxes = document.querySelectorAll(".certificateCheckbox");
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = event.target.checked;
+      });
+    };
+
+    document.getElementById("delete-selected-btn").onclick = () => {
+      const checkboxes = document.querySelectorAll(".certificateCheckbox");
+      const selectedCertificates = Array.from(checkboxes).filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
+      if (selectedCertificates.length === 0) {
+        alert("Please select certificates to delete.");
+        return;
+      }
+      if (confirm(`Are you sure you want to delete ${selectedCertificates.length} certificates?`)) {
+        selectedCertificates.forEach(async (certificateId) => {
+          try {
+            const response = await fetch(`/certificates/${certificateId}`, {
+              method: "DELETE"
+            });
+            if (response.ok) {
+              // Remove the deleted certificate from the UI
+              document.querySelector(`input[value="${certificateId}"]`).closest("tr").remove();
+              // alert(`Certificate ${certificateId} deleted successfully.`);
+              document.getElementById("message").innerText = `Certificate ${certificateId} deleted successfully.`;
+            } else {
+              throw new Error("Failed to delete certificate.");
+            }
+          } catch (error) {
+            console.error("Error deleting certificate:", error);
+            alert("An error occurred while deleting the certificate.");
+          }
+        });
+      }
+    };
+
+    document.getElementById("certificatesList").addEventListener("click", async (event) => {
+      if (event.target.classList.contains("renew-btn")) {
+        const certificateId = event.target.getAttribute("data-id");
+        if (confirm(`Are you sure you want to renew certificate ${certificateId}?`)) {
+          try {
+            const response = await fetch(`/certificates/renew/${certificateId}`, {
+              method: "POST"
+            });
+            if (response.ok) {
+              alert(`Certificate ${certificateId} renewed successfully.`);
+            } else {
+              throw new Error("Failed to renew certificate.");
+            }
+          } catch (error) {
+            console.error("Error renewing certificate:", error);
+            alert("An error occurred while renewing the certificate.");
+          }
+        }
+      }
+      if (event.target.classList.contains("resend-btn")) {
+        const certificateId = event.target.getAttribute("data-id");
+        try {
+          const response = await fetch(`/certificates/resend/${certificateId}`, {
+            method: "POST"
+          });
+          if (response.ok) {
+            document.getElementById("message").innerText = `Certificate ${certificateId} sent successfully.`;
+          } else {
+            throw new Error("Failed to resend certificate.");
+          }
+        } catch (error) {
+          console.error("Error resending certificate:", error);
+          alert("An error occurred while resending the certificate.");
+        }
+      }
+    });
+
+    // Initially show settings section
+    sections["Settings"].classList.remove("hidden");
+  });
+</script>
+
+</body>
+</html>

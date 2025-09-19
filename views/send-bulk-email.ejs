@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bulk Email Management - SHA</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Quill Editor for Rich Text -->
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <style>
+    * {
+      font-family: "Inter", sans-serif;
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.8s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .email-counter {
+      transition: all 0.3s ease;
+    }
+    .attachment-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .attachment-item .remove-btn {
+      color: #dc2626;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .attachment-item .remove-btn:hover {
+      color: #991b1b;
+    }
+    .drag-drop-zone {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      transition: all 0.3s ease;
+    }
+    .drag-drop-zone.drag-over {
+      border-color: #3b82f6;
+      background: #eff6ff;
+    }
+    #editor {
+      min-height: 200px;
+    }
+    .ql-editor {
+      min-height: 180px;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+  <!-- Header -->
+  <div class="text-center py-8 animate-fade-in">
+    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mb-4">
+      <i class="fas fa-envelope-open-text text-2xl text-white"></i>
+    </div>
+    <h1 class="text-3xl font-bold text-gray-800 mb-2">Bulk Email Management</h1>
+    <p class="text-gray-600">Send professional emails to multiple recipients efficiently</p>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-4xl mx-auto px-6 pb-12">
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 animate-fade-in">
+      <div class="glass-effect rounded-xl shadow-lg p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-gray-600 text-sm font-medium">Total Recipients</h3>
+            <p class="text-2xl font-bold text-blue-600" id="recipientCount">0</p>
+          </div>
+          <div class="bg-blue-100 p-3 rounded-full">
+            <i class="fas fa-users text-blue-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass-effect rounded-xl shadow-lg p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-gray-600 text-sm font-medium">Email Status</h3>
+            <p class="text-2xl font-bold text-green-600" id="emailStatus">Ready</p>
+          </div>
+          <div class="bg-green-100 p-3 rounded-full">
+            <i class="fas fa-check-circle text-green-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass-effect rounded-xl shadow-lg p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-gray-600 text-sm font-medium">Last Sent</h3>
+            <p class="text-lg font-semibold text-purple-600" id="lastSent">Never</p>
+          </div>
+          <div class="bg-purple-100 p-3 rounded-full">
+            <i class="fas fa-clock text-purple-600 text-xl"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Email Form -->
+    <div class="glass-effect rounded-xl shadow-xl p-8 animate-fade-in">
+      <form id="bulkEmailForm" class="space-y-6">
+        <!-- Recipients Section -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <label for="recipients" class="text-lg font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-address-book mr-2 text-blue-500"></i>
+              Email Recipients
+            </label>
+            <div class="flex items-center space-x-2">
+              <button type="button" id="validateEmails" class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition-colors">
+                <i class="fas fa-check-double mr-1"></i>Validate
+              </button>
+              <span class="text-sm text-gray-500 email-counter" id="emailCount">0 emails</span>
+            </div>
+          </div>
+          <textarea 
+            id="recipients" 
+            name="recipients" 
+            class="w-full border-2 border-gray-200 rounded-lg shadow-sm p-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" 
+            rows="6" 
+            placeholder="Enter email addresses separated by commas or new lines..."
+            required><%= emails || '' %></textarea>
+          <div id="emailValidation" class="hidden mt-2"></div>
+        </div>
+
+        <!-- Sender Information -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="name" class="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-user mr-2 text-green-500"></i>
+              Sender Name
+            </label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              class="w-full border-2 border-gray-200 rounded-lg shadow-sm p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" 
+              placeholder="Your organization name"
+              required>
+          </div>
+          <div>
+            <label for="resultEmail" class="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-reply mr-2 text-purple-500"></i>
+              Results Email
+            </label>
+            <input 
+              type="email" 
+              id="resultEmail" 
+              name="resultEmail" 
+              class="w-full border-2 border-gray-200 rounded-lg shadow-sm p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" 
+              placeholder="where-to-send-results@email.com"
+              required>
+          </div>
+        </div>
+
+        <!-- Email Content -->
+        <div>
+          <label for="subject" class="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
+            <i class="fas fa-tag mr-2 text-yellow-500"></i>
+            Email Subject
+          </label>
+          <input 
+            type="text" 
+            id="subject" 
+            name="subject" 
+            class="w-full border-2 border-gray-200 rounded-lg shadow-sm p-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200" 
+            placeholder="Enter your email subject"
+            required>
+        </div>
+
+        <!-- Email Content Type Selection -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-800 mb-3 flex items-center">
+            <i class="fas fa-palette mr-2 text-indigo-500"></i>
+            Email Content Type
+          </label>
+          <div class="flex space-x-4 mb-4">
+            <label class="inline-flex items-center">
+              <input type="radio" name="contentType" value="text" class="form-radio text-blue-600" checked>
+              <span class="ml-2 text-sm">Plain Text</span>
+            </label>
+            <label class="inline-flex items-center">
+              <input type="radio" name="contentType" value="html" class="form-radio text-blue-600">
+              <span class="ml-2 text-sm">HTML (Rich Text)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Plain Text Content -->
+        <div id="textContent">
+          <label for="text" class="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
+            <i class="fas fa-edit mr-2 text-red-500"></i>
+            Email Content (Plain Text)
+          </label>
+          <textarea 
+            id="text" 
+            name="text"
+            class="w-full border-2 border-gray-200 rounded-lg shadow-sm p-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+            rows="8"
+            placeholder="Write your email message here..."
+            required></textarea>
+          <div class="mt-2 text-sm text-gray-500 flex justify-between">
+            <span>Tip: Use a professional and clear message</span>
+            <span id="charCount">0 characters</span>
+          </div>
+        </div>
+
+        <!-- HTML Content Editor -->
+        <div id="htmlContent" class="hidden">
+          <label class="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
+            <i class="fas fa-code mr-2 text-red-500"></i>
+            Email Content (HTML Rich Text)
+          </label>
+          <div id="editor" class="border-2 border-gray-200 rounded-lg bg-white"></div>
+          <div class="mt-2 text-sm text-gray-500">
+            <span>Tip: Use the rich text editor to format your email with images, links, and styling</span>
+          </div>
+        </div>
+
+        <!-- File Attachments -->
+        <div>
+          <label class="block text-sm font-semibold text-gray-800 mb-2 flex items-center">
+            <i class="fas fa-paperclip mr-2 text-green-500"></i>
+            File Attachments
+          </label>
+          
+          <!-- Drag and Drop Zone -->
+          <div id="dropZone" class="drag-drop-zone border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-400 transition-colors">
+            <div class="space-y-2">
+              <i class="fas fa-cloud-upload-alt text-4xl text-gray-400"></i>
+              <p class="text-gray-600">Drag and drop files here, or <span class="text-blue-600 font-medium">click to browse</span></p>
+              <p class="text-sm text-gray-500">Supported formats: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, GIF (Max: 10MB each)</p>
+            </div>
+            <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif" class="hidden">
+          </div>
+          
+          <!-- Attachment List -->
+          <div id="attachmentsList" class="mt-4 hidden">
+            <h4 class="text-sm font-medium text-gray-700 mb-2">Attached Files:</h4>
+            <div id="attachmentsContainer" class="flex flex-wrap"></div>
+          </div>
+          
+          <!-- Upload Progress -->
+          <div id="uploadProgress" class="mt-4 hidden">
+            <div class="bg-gray-200 rounded-full h-2">
+              <div id="progressBar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">Uploading files...</p>
+          </div>
+        </div>
+
+        <!-- Send Button -->
+        <div class="flex justify-center pt-4">
+          <button 
+            type="submit" 
+            id="sendButton"
+            class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg shadow-lg hover:from-blue-700 hover:to-purple-700 transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            <i class="fas fa-paper-plane mr-2"></i>
+            <span id="buttonText">Send Bulk Emails</span>
+            <div class="hidden ml-2" id="loadingSpinner">
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            </div>
+          </button>
+        </div>
+      </form>
+
+      <!-- Results Section -->
+      <div id="result" class="mt-8"></div>
+    </div>
+  </div>
+
+<script>
+  // Global variables
+  let quillEditor;
+  let attachedFiles = [];
+  
+  // Initialize event listeners
+  document.addEventListener('DOMContentLoaded', function() {
+    initializeForm();
+    updateEmailCount();
+    updateCharCount();
+    initializeHtmlEditor();
+    initializeFileUpload();
+  });
+
+  function initializeForm() {
+    const recipientsTextarea = document.getElementById('recipients');
+    const textTextarea = document.getElementById('text');
+    const validateButton = document.getElementById('validateEmails');
+    const form = document.getElementById('bulkEmailForm');
+
+    // Update email count on input
+    recipientsTextarea.addEventListener('input', function() {
+      updateEmailCount();
+      validateEmailsInRealTime();
+    });
+
+    // Update character count
+    textTextarea.addEventListener('input', updateCharCount);
+
+    // Validate emails button
+    validateButton.addEventListener('click', validateAllEmails);
+
+    // Form submission
+    form.addEventListener('submit', handleFormSubmit);
+    
+    // Content type switching
+    const contentTypeRadios = document.querySelectorAll('input[name="contentType"]');
+    contentTypeRadios.forEach(radio => {
+      radio.addEventListener('change', toggleContentType);
+    });
+  }
+
+  function initializeHtmlEditor() {
+    // Initialize Quill rich text editor
+    quillEditor = new Quill('#editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [{ 'header': [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'color': [] }, { 'background': [] }],
+          [{ 'align': [] }],
+          ['link', 'image'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['blockquote', 'code-block'],
+          ['clean']
+        ]
+      },
+      placeholder: 'Write your HTML email content here...'
+    });
+  }
+
+  function initializeFileUpload() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    // Click to browse files
+    dropZone.addEventListener('click', () => fileInput.click());
+    
+    // File input change
+    fileInput.addEventListener('change', handleFileSelection);
+    
+    // Drag and drop events
+    dropZone.addEventListener('dragover', handleDragOver);
+    dropZone.addEventListener('dragleave', handleDragLeave);
+    dropZone.addEventListener('drop', handleFileDrop);
+  }
+
+  function toggleContentType() {
+    const contentType = document.querySelector('input[name="contentType"]:checked').value;
+    const textContent = document.getElementById('textContent');
+    const htmlContent = document.getElementById('htmlContent');
+    
+    if (contentType === 'html') {
+      textContent.classList.add('hidden');
+      htmlContent.classList.remove('hidden');
+      document.getElementById('text').removeAttribute('required');
+    } else {
+      textContent.classList.remove('hidden');
+      htmlContent.classList.add('hidden');
+      document.getElementById('text').setAttribute('required', 'required');
+    }
+  }
+
+  function updateEmailCount() {
+    const recipients = getEmailList();
+    const count = recipients.length;
+    document.getElementById('emailCount').textContent = `${count} email${count !== 1 ? 's' : ''}`;
+    document.getElementById('recipientCount').textContent = count;
+  }
+
+  function updateCharCount() {
+    const text = document.getElementById('text').value;
+    document.getElementById('charCount').textContent = `${text.length} characters`;
+  }
+
+  function getEmailList() {
+    const recipientsText = document.getElementById('recipients').value;
+    return recipientsText
+      .split(/[,\n]/)
+      .map(email => email.trim())
+      .filter(email => email.length > 0);
+  }
+
+  function validateEmail(email) {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  }
+
+  function validateEmailsInRealTime() {
+    const emails = getEmailList();
+    const validCount = emails.filter(validateEmail).length;
+    const invalidCount = emails.length - validCount;
+    
+    const statusElement = document.getElementById('emailStatus');
+    if (emails.length === 0) {
+      statusElement.textContent = 'Ready';
+      statusElement.className = 'text-2xl font-bold text-green-600';
+    } else if (invalidCount === 0) {
+      statusElement.textContent = 'Valid';
+      statusElement.className = 'text-2xl font-bold text-green-600';
+    } else {
+      statusElement.textContent = `${invalidCount} Invalid`;
+      statusElement.className = 'text-2xl font-bold text-red-600';
+    }
+  }
+
+  function validateAllEmails() {
+    const emails = getEmailList();
+    const validEmails = [];
+    const invalidEmails = [];
+
+    emails.forEach(email => {
+      if (validateEmail(email)) {
+        validEmails.push(email);
+      } else {
+        invalidEmails.push(email);
+      }
+    });
+
+    const validationDiv = document.getElementById('emailValidation');
+    validationDiv.className = 'mt-2 p-4 rounded-lg border';
+    
+    if (invalidEmails.length === 0) {
+      validationDiv.className += ' bg-green-50 border-green-200';
+      validationDiv.innerHTML = `
+        <div class="flex items-center">
+          <i class="fas fa-check-circle text-green-600 mr-2"></i>
+          <span class="text-green-800 font-medium">All ${validEmails.length} emails are valid!</span>
+        </div>
+      `;
+    } else {
+      validationDiv.className += ' bg-red-50 border-red-200';
+      validationDiv.innerHTML = `
+        <div class="space-y-2">
+          <div class="flex items-center">
+            <i class="fas fa-exclamation-triangle text-red-600 mr-2"></i>
+            <span class="text-red-800 font-medium">${invalidEmails.length} invalid email(s) found:</span>
+          </div>
+          <div class="text-sm text-red-700 pl-6">
+            ${invalidEmails.map(email => `• ${email}`).join('<br>')}
+          </div>
+          <div class="text-sm text-green-700">
+            <strong>Valid emails:</strong> ${validEmails.length}
+          </div>
+        </div>
+      `;
+    }
+    
+    validationDiv.classList.remove('hidden');
+  }
+
+  async function handleFormSubmit(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const sendButton = document.getElementById('sendButton');
+    const buttonText = document.getElementById('buttonText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const resultDiv = document.getElementById('result');
+    
+    // Get form data
+    const recipients = getEmailList().filter(validateEmail);
+    const name = form.name.value.trim();
+    const subject = form.subject.value.trim();
+    const resultEmail = form.resultEmail.value.trim();
+    
+    // Get email content based on type
+    const contentType = document.querySelector('input[name="contentType"]:checked').value;
+    let text = '';
+    let htmlContent = '';
+    
+    if (contentType === 'html') {
+      htmlContent = quillEditor.root.innerHTML;
+      text = quillEditor.getText(); // Plain text fallback
+    } else {
+      text = form.text.value.trim();
+    }
+
+    // Validation
+    if (recipients.length === 0) {
+      showResult('error', 'No valid email addresses found. Please check your recipients list.');
+      return;
+    }
+
+    if (!validateEmail(resultEmail)) {
+      showResult('error', 'Please enter a valid result email address.');
+      return;
+    }
+    
+    // Validate content
+    if (contentType === 'html' && (!htmlContent || htmlContent.trim() === '<p><br></p>')) {
+      showResult('error', 'Please enter email content.');
+      return;
+    } else if (contentType === 'text' && !text) {
+      showResult('error', 'Please enter email content.');
+      return;
+    }
+
+    // Update UI for loading state
+    sendButton.disabled = true;
+    buttonText.textContent = 'Sending...';
+    loadingSpinner.classList.remove('hidden');
+    document.getElementById('emailStatus').textContent = 'Sending';
+    document.getElementById('emailStatus').className = 'text-2xl font-bold text-yellow-600';
+
+    try {
+      // Create FormData to support file uploads
+      const formData = new FormData();
+      
+      // Add basic data
+      formData.append('recipients', JSON.stringify(recipients));
+      formData.append('name', name);
+      formData.append('subject', subject);
+      formData.append('resultEmail', resultEmail);
+      formData.append('contentType', contentType);
+      formData.append('text', text);
+      
+      if (contentType === 'html') {
+        formData.append('htmlContent', htmlContent);
+      }
+      
+      // Add file attachments
+      attachedFiles.forEach((file, index) => {
+        formData.append(`attachment_${index}`, file);
+      });
+      
+      const response = await fetch('/certificates/send-bulk', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        showResult('success', `
+          <div class="space-y-2">
+            <h4 class="font-semibold">Email sent successfully!</h4>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>✅ <strong>Successful:</strong> ${result.success || 0}</div>
+              <div>❌ <strong>Failed:</strong> ${result.failure || 0}</div>
+            </div>
+            ${result.failedEmails && result.failedEmails.length > 0 ? 
+              `<details class="mt-2">
+                <summary class="cursor-pointer text-sm text-gray-600">View failed emails</summary>
+                <div class="mt-2 text-xs text-gray-500">
+                  ${result.failedEmails.map(email => `• ${email}`).join('<br>')}
+                </div>
+              </details>` : ''
+            }
+            <div class="text-sm text-gray-600 mt-2">
+              📧 Detailed report sent to: ${resultEmail}
+            </div>
+          </div>
+        `);
+        
+        // Update last sent time
+        document.getElementById('lastSent').textContent = new Date().toLocaleTimeString();
+        document.getElementById('emailStatus').textContent = 'Sent';
+        document.getElementById('emailStatus').className = 'text-2xl font-bold text-green-600';
+        
+      } else {
+        showResult('error', result.error || 'Failed to send emails. Please try again.');
+        document.getElementById('emailStatus').textContent = 'Failed';
+        document.getElementById('emailStatus').className = 'text-2xl font-bold text-red-600';
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showResult('error', 'Network error occurred. Please check your connection and try again.');
+      document.getElementById('emailStatus').textContent = 'Error';
+      document.getElementById('emailStatus').className = 'text-2xl font-bold text-red-600';
+    } finally {
+      // Reset button state
+      sendButton.disabled = false;
+      buttonText.textContent = 'Send Bulk Emails';
+      loadingSpinner.classList.add('hidden');
+    }
+  }
+
+  function showResult(type, message) {
+    const resultDiv = document.getElementById('result');
+    const isSuccess = type === 'success';
+    
+    resultDiv.className = `p-6 rounded-lg border-l-4 ${
+      isSuccess ? 
+      'bg-green-50 border-green-400 text-green-800' : 
+      'bg-red-50 border-red-400 text-red-800'
+    }`;
+    
+    resultDiv.innerHTML = `
+      <div class="flex items-start">
+        <div class="flex-shrink-0">
+          <i class="fas fa-${isSuccess ? 'check-circle' : 'exclamation-triangle'} text-xl"></i>
+        </div>
+        <div class="ml-3">
+          ${message}
+        </div>
+      </div>
+    `;
+    
+    // Auto-hide success messages after 10 seconds
+    if (isSuccess) {
+      setTimeout(() => {
+        resultDiv.innerHTML = '';
+        resultDiv.className = '';
+      }, 10000);
+    }
+  }
+
+  // File handling functions
+  function handleFileSelection(event) {
+    const files = Array.from(event.target.files);
+    processFiles(files);
+  }
+
+  function handleDragOver(event) {
+    event.preventDefault();
+    event.currentTarget.classList.add('drag-over');
+  }
+
+  function handleDragLeave(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+  }
+
+  function handleFileDrop(event) {
+    event.preventDefault();
+    event.currentTarget.classList.remove('drag-over');
+    const files = Array.from(event.dataTransfer.files);
+    processFiles(files);
+  }
+
+  function processFiles(files) {
+    const validFiles = [];
+    const errors = [];
+    
+    files.forEach(file => {
+      // Check file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        errors.push(`${file.name} is too large (max 10MB)`);
+        return;
+      }
+      
+      // Check file type
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
+        errors.push(`${file.name} has unsupported format`);
+        return;
+      }
+      
+      // Check if file already attached
+      if (attachedFiles.some(f => f.name === file.name && f.size === file.size)) {
+        errors.push(`${file.name} is already attached`);
+        return;
+      }
+      
+      validFiles.push(file);
+    });
+    
+    if (errors.length > 0) {
+      alert('File errors:\n' + errors.join('\n'));
+    }
+    
+    if (validFiles.length > 0) {
+      uploadFiles(validFiles);
+    }
+  }
+
+  function uploadFiles(files) {
+    const progressContainer = document.getElementById('uploadProgress');
+    const progressBar = document.getElementById('progressBar');
+    
+    progressContainer.classList.remove('hidden');
+    
+    // Simulate upload progress
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 10;
+      progressBar.style.width = progress + '%';
+      
+      if (progress >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          progressContainer.classList.add('hidden');
+          addFilesToAttachmentsList(files);
+        }, 500);
+      }
+    }, 100);
+  }
+
+  function addFilesToAttachmentsList(files) {
+    files.forEach(file => {
+      attachedFiles.push(file);
+    });
+    
+    updateAttachmentsDisplay();
+  }
+
+  function updateAttachmentsDisplay() {
+    const attachmentsList = document.getElementById('attachmentsList');
+    const attachmentsContainer = document.getElementById('attachmentsContainer');
+    
+    if (attachedFiles.length === 0) {
+      attachmentsList.classList.add('hidden');
+      return;
+    }
+    
+    attachmentsList.classList.remove('hidden');
+    
+    attachmentsContainer.innerHTML = attachedFiles.map((file, index) => `
+      <div class="attachment-item">
+        <i class="fas fa-${getFileIcon(file.type)}"></i>
+        <span class="text-sm">${file.name}</span>
+        <span class="text-xs text-gray-500">(${formatFileSize(file.size)})</span>
+        <i class="fas fa-times remove-btn" onclick="removeAttachment(${index})"></i>
+      </div>
+    `).join('');
+  }
+
+  function getFileIcon(fileType) {
+    if (fileType.startsWith('image/')) return 'file-image';
+    if (fileType.includes('pdf')) return 'file-pdf';
+    if (fileType.includes('word')) return 'file-word';
+    if (fileType.includes('excel') || fileType.includes('spreadsheet')) return 'file-excel';
+    return 'file';
+  }
+
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+
+  function removeAttachment(index) {
+    attachedFiles.splice(index, 1);
+    updateAttachmentsDisplay();
+  }
+</script>
+</body>
+</html>

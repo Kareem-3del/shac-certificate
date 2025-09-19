@@ -1,0 +1,87 @@
+<%- include('../partials/dashboard-header', {
+  title: title,
+  includeChartJS: includeChartJS,
+  additionalStyles: additionalStyles,
+  currentPage: currentPage,
+  pageTitle: pageTitle,
+  pageDescription: pageDescription,
+  user: user
+}) %>
+<%- include('../partials/dashboard-sidebar', { 
+  currentPage: currentPage, 
+  user: user 
+}) %>
+
+<!-- Error Boundary Content -->
+<div class="flex items-center justify-center min-h-96">
+    <div class="text-center max-w-2xl mx-auto">
+        <!-- Error Icon -->
+        <div class="w-24 h-24 mx-auto mb-6 bg-red-100 rounded-full flex items-center justify-center">
+            <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.966-.833-2.736 0L3.072 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+            </svg>
+        </div>
+
+        <!-- Error Message -->
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Dashboard Error</h2>
+        <p class="text-gray-600 mb-6">We encountered an issue while loading the dashboard. Please try again or contact support if the problem persists.</p>
+
+        <!-- Error Details (only in development) -->
+        <% if (error.details) { %>
+        <div class="bg-gray-100 rounded-lg p-4 mb-6 text-left">
+            <h4 class="font-semibold text-gray-900 mb-2">Error Details:</h4>
+            <p class="text-sm text-red-600 mb-2"><%= error.message %></p>
+            <details class="text-xs text-gray-700">
+                <summary class="cursor-pointer hover:text-gray-900">Stack Trace</summary>
+                <pre class="mt-2 whitespace-pre-wrap"><%= error.details %></pre>
+            </details>
+        </div>
+        <% } else { %>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p class="text-red-700"><%= error.message %></p>
+        </div>
+        <% } %>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center space-x-4">
+            <button 
+                onclick="location.reload()" 
+                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                Try Again
+            </button>
+            <a 
+                href="/dashboard" 
+                class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors">
+                Go Back
+            </a>
+        </div>
+
+        <!-- Additional Help -->
+        <div class="mt-8 text-sm text-gray-500">
+            <p>If this error continues, please check:</p>
+            <ul class="mt-2 space-y-1">
+                <li>• Database connectivity</li>
+                <li>• Network connection</li>
+                <li>• Server status</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-retry after 30 seconds
+    setTimeout(() => {
+        showNotification('Auto-retrying dashboard load...', 'info');
+        setTimeout(() => location.reload(), 2000);
+    }, 30000);
+
+    // Show notification about the error
+    document.addEventListener('DOMContentLoaded', function() {
+        showNotification('Dashboard error occurred. Auto-retry in 30 seconds.', 'error');
+    });
+</script>
+
+<%- include('../partials/dashboard-footer', { 
+  pageScripts: pageScripts,
+  additionalScripts: additionalScripts
+}) %>

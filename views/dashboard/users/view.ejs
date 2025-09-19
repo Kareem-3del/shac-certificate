@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Details - <%= targetUser.username %> - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --color-primary: 59 130 246;
+      --color-secondary: 99 102 241;
+      --color-accent: 34 197 94;
+      --color-background: 249 250 251;
+      --color-surface: 255 255 255;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    }
+  </style>
+</head>
+<body class="min-h-screen" style="background-color: rgb(var(--color-background))">
+  <div class="flex">
+    <!-- Sidebar -->
+    <nav class="w-64 min-h-screen shadow-lg" style="background-color: rgb(var(--color-surface))">
+      <div class="p-6">
+        <h1 class="text-2xl font-bold gradient-bg bg-clip-text text-transparent">Dashboard</h1>
+      </div>
+      <ul class="mt-6">
+        <li><a href="/dashboard" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+          </svg>
+          Overview
+        </a></li>
+        <li><a href="/dashboard/certificates" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Certificates
+        </a></li>
+        <li><a href="/dashboard/users" class="flex items-center px-6 py-3 text-blue-600 bg-blue-50 border-r-2 border-blue-600">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"></path>
+          </svg>
+          Users
+        </a></li>
+        <li><a href="/dashboard/advertising" class="flex items-center px-6 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors">
+          <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+          </svg>
+          Advertising ROI
+        </a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="flex-1 p-8">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-8">
+        <div>
+          <nav class="text-sm text-gray-500 mb-2">
+            <a href="/dashboard/users/list" class="hover:text-blue-600">Users</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-900"><%= targetUser.username %></span>
+          </nav>
+          <h1 class="text-3xl font-bold text-gray-900">User Details</h1>
+          <p class="text-gray-600 mt-2">View and manage user account information</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <% if (user.role === 'admin' || (user.role === 'moderator' && targetUser.role !== 'admin')) { %>
+          <a href="/dashboard/users/<%= targetUser.id %>/edit" class="px-4 py-2 gradient-bg text-white rounded-lg hover:opacity-90 transition-opacity">
+            Edit User
+          </a>
+          <% } %>
+          <div class="w-8 h-8 rounded-full gradient-bg flex items-center justify-center">
+            <span class="text-white text-sm font-medium"><%= user.username.charAt(0).toUpperCase() %></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Profile Card -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- User Info -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-xl shadow-sm p-8 card-hover transition-all duration-300 mb-6">
+            <div class="flex items-start space-x-6">
+              <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center">
+                <span class="text-white text-2xl font-bold"><%= targetUser.username.charAt(0).toUpperCase() %></span>
+              </div>
+              <div class="flex-1">
+                <h2 class="text-2xl font-bold text-gray-900"><%= targetUser.username %></h2>
+                <p class="text-gray-600 mt-1">User ID: #<%= targetUser.id %></p>
+                <div class="mt-4 flex items-center space-x-4">
+                  <span class="inline-flex px-3 py-1 text-sm font-semibold rounded-full 
+                    <%= targetUser.role === 'admin' ? 'bg-red-100 text-red-800' : 
+                        targetUser.role === 'moderator' ? 'bg-yellow-100 text-yellow-800' : 
+                        'bg-green-100 text-green-800' %>">
+                    <%= targetUser.role.charAt(0).toUpperCase() + targetUser.role.slice(1) %>
+                  </span>
+                  <span class="text-sm text-gray-500">
+                    Joined <%= targetUser.created_at ? new Date(targetUser.created_at).toLocaleDateString() : 'Unknown' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Details -->
+          <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300 mb-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Account Details</h3>
+            <div class="grid grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Username</label>
+                <p class="text-gray-900 font-medium"><%= targetUser.username %></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Role</label>
+                <p class="text-gray-900 font-medium"><%= targetUser.role %></p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Points Balance</label>
+                <p class="text-gray-900 font-medium"><%= targetUser.points || 0 %> points</p>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-500 mb-1">Account Status</label>
+                <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                  Active
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Subscriptions -->
+          <% if (targetUser.subscriptions && targetUser.subscriptions.length > 0) { %>
+          <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Subscriptions</h3>
+            <div class="space-y-3">
+              <% targetUser.subscriptions.forEach(function(subscription) { %>
+              <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h4 class="font-medium text-gray-900"><%= subscription.name %></h4>
+                    <p class="text-sm text-gray-500 mt-1">
+                      Subscribed: <%= subscription.created_at ? new Date(subscription.created_at).toLocaleDateString() : 'Unknown' %>
+                    </p>
+                  </div>
+                  <span class="text-sm font-medium text-green-600">$<%= subscription.price || 0 %></span>
+                </div>
+              </div>
+              <% }); %>
+            </div>
+          </div>
+          <% } %>
+        </div>
+
+        <!-- Sidebar Info -->
+        <div class="space-y-6">
+          <!-- Quick Stats -->
+          <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Total Subscriptions</span>
+                <span class="font-semibold text-gray-900"><%= targetUser.subscriptions ? targetUser.subscriptions.length : 0 %></span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Points Balance</span>
+                <span class="font-semibold text-gray-900"><%= targetUser.points || 0 %></span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600">Account Age</span>
+                <span class="font-semibold text-gray-900">
+                  <% if (targetUser.created_at) { %>
+                    <%= Math.floor((new Date() - new Date(targetUser.created_at)) / (1000 * 60 * 60 * 24)) %> days
+                  <% } else { %>
+                    Unknown
+                  <% } %>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
+            <div class="space-y-3">
+              <% if (user.role === 'admin' || (user.role === 'moderator' && targetUser.role !== 'admin')) { %>
+              <a href="/dashboard/users/<%= targetUser.id %>/edit" class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center block">
+                Edit User
+              </a>
+              <% } %>
+              
+              <% if (user.role === 'admin') { %>
+              <button onclick="resetPassword(<%= targetUser.id %>)" class="w-full px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                Reset Password
+              </button>
+              <% } %>
+
+              <% if (user.role === 'admin' && targetUser.role !== 'admin') { %>
+              <button onclick="deleteUser(<%= targetUser.id %>)" class="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                Delete User
+              </button>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Activity Log -->
+          <div class="bg-white rounded-xl shadow-sm p-6 card-hover transition-all duration-300">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+            <div class="space-y-3">
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                <div>
+                  <p class="text-sm text-gray-900">Account created</p>
+                  <p class="text-xs text-gray-500">
+                    <%= targetUser.created_at ? new Date(targetUser.created_at).toLocaleDateString() : 'Unknown' %>
+                  </p>
+                </div>
+              </div>
+              
+              <% if (targetUser.subscriptions && targetUser.subscriptions.length > 0) { %>
+              <div class="flex items-center space-x-3">
+                <div class="w-2 h-2 bg-blue-400 rounded-full"></div>
+                <div>
+                  <p class="text-sm text-gray-900">Latest subscription</p>
+                  <p class="text-xs text-gray-500">
+                    <%= new Date(targetUser.subscriptions[targetUser.subscriptions.length - 1].created_at).toLocaleDateString() %>
+                  </p>
+                </div>
+              </div>
+              <% } %>
+              
+              <div class="text-center text-gray-500 text-sm mt-4">
+                <p>Activity history will be enhanced in future updates</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function resetPassword(userId) {
+      if (confirm('Are you sure you want to reset this user\'s password?')) {
+        // Implementation for password reset
+        showNotification('Password reset feature is not yet configured. Please contact your administrator.', 'info');
+      }
+    }
+
+    function deleteUser(userId) {
+      if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+        fetch(`/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+        .then(response => {
+          if (response.ok) {
+            window.location.href = '/dashboard/users/list';
+          } else {
+            alert('Failed to delete user');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Failed to delete user');
+        });
+      }
+    }
+  </script>
+</body>
+</html>
